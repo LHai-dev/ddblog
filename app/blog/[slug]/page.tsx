@@ -47,6 +47,8 @@ export default async function BlogPost({ params }) {
               })}
               • 6 min read
             </p>
+            <p className="text-lg text-gray-700 font-semibold">{post.viewCount}</p>
+
           </div>
         </div>
 

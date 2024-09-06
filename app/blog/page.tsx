@@ -1,11 +1,12 @@
 'use client'; // Mark this as a Client Component
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from "next/link";
 
 export default function Page() {
   const [posts, setPosts] = useState([]);
+  const [clickCounts, setClickCounts] = useState({}); // Track clicks per post
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -13,6 +14,12 @@ export default function Page() {
         const res = await fetch('/api/blogs');
         const data = await res.json();
         setPosts(data);
+        // Initialize click count for each post
+        const initialClickCounts = data.reduce((acc, post) => {
+          acc[post.slug] = 0;
+          return acc;
+        }, {});
+        setClickCounts(initialClickCounts);
       } catch (error) {
         console.error('Failed to fetch posts:', error);
       }
@@ -20,6 +27,32 @@ export default function Page() {
 
     fetchPosts();
   }, []);
+
+  const handleClick = async (slug) => {
+    // Increment the click count for the clicked post
+    setClickCounts((prevCounts) => {
+      const updatedCounts = { ...prevCounts, [slug]: prevCounts[slug] + 1 };
+
+      // If click count reaches 3, reset count and increment viewCount in the backend
+      if (updatedCounts[slug] === 3) {
+        incrementViewCount(slug); // Call the API to increment the view count
+        updatedCounts[slug] = 0; // Reset the click count
+      }
+
+      return updatedCounts;
+    });
+  };
+
+  const incrementViewCount = async (slug) => {
+    try {
+      await fetch(`/api/increment-view-count?slug=${slug}`, {
+        method: 'POST',
+      });
+      console.log('View count incremented for:', slug);
+    } catch (error) {
+      console.error('Failed to increment view count:', error);
+    }
+  };
 
   return (
     <div className="container mx-auto mt-10 px-4">
@@ -29,8 +62,12 @@ export default function Page() {
             <p className="text-center text-gray-500">No posts found.</p>
           ) : (
             posts.map((post) => (
-              <Link href={`/blog/${post.slug}`} key={post.slug}>
-                <div className="block mb-8 border-b border-gray-300 pb-6 hover:bg-gray-50 cursor-pointer">
+              <div
+                key={post.slug}
+                className="block mb-8 border-b border-gray-300 pb-6 hover:bg-gray-50 cursor-pointer"
+                onClick={() => handleClick(post.slug)} // Track click events
+              >
+                <Link href={`/blog/${post.slug}`} key={post.slug}>
                   <div className="flex flex-col md:flex-row md:items-center">
                     {/* Main Post Content */}
                     <div className="md:w-10/12">
@@ -76,8 +113,8 @@ export default function Page() {
                       />
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
             ))
           )}
         </div>
