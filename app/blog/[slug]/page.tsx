@@ -2,24 +2,24 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Post } from "@/app/type/type";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
 // Fetch data in a Server Component
-async function getPost(slug: string) {
-  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/blogs/${slug}`, { cache: 'no-store' });
+async function getPost(slug: string): Promise<Post | null> {
+  try {
+    // Use a relative path to fetch the blog post
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${slug}`, { cache: 'no-store' });
 
-  if (!res.ok) {
-    return null; // Return null if the blog post is not found
+    if (!res.ok) {
+      console.error('Failed to fetch post:', res.statusText); // Log server error details
+      return null;
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching post:', error); // Log any fetch-related errors
+    return null;
   }
-
-  return res.json();
-}
-
-// Define the type for params
-interface Params {
-  params: {
-    slug: string;
-  };
 }
 
 export default async function BlogPost({ params }: Params) {
@@ -86,7 +86,7 @@ export default async function BlogPost({ params }: Params) {
               <i className="bi bi-share"></i> Share
             </button>
           </div>
-          <Link href="/contact" className="text-blue-500 hover:underline">
+          <Link href="/" className="text-blue-500 hover:underline">
             Contact Us
           </Link>
         </div>
