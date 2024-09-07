@@ -4,7 +4,7 @@ const nextConfig = {
     // transpilePackages: ['@mdxeditor/editor'],
     //
     // // Enable strict mode for React (recommended)
-    // reactStrictMode: true,
+    reactStrictMode: true,
     //
     // // Modify webpack settings
     // webpack: (config) => {
@@ -33,8 +33,6 @@ const nextConfig = {
                 pathname: '/**',
             },
         ],
-        // Deprecated `domains` field (but okay to keep)
-        domains: ['localhost','ddkhdev.lol'], // For local development
     },
 };
 

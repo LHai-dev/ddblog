@@ -1,37 +1,22 @@
+// app/blog/[slug]/page.tsx
+
 import { notFound } from 'next/navigation';
 import { Post } from '@/app/type/type';
 import BlogDetail from '@/app/components/BlogDetail';
 
-export interface Params {
-  params: {
-    slug: string;
-  };
-}
+export default async function BlogPost({ params }: { params: { slug: string } }) {
+  // Move the data fetching logic inside the component
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${params.slug}`);
 
-async function getPost(slug: string): Promise<Post | null> {
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000';
-    console.log('Base URL in production:', baseUrl); // Log the base URL in production
-
-    const res = await fetch(`${baseUrl}/api/blogs/${slug}`, { cache: 'no-store' });
-
-    if (!res.ok) {
-      console.error('Failed to fetch post:', res.status, res.statusText);
-      return null;
-    }
-
-    return res.json();
-  } catch (error) {
-    console.error('Error fetching post:', error);
-    return null;
+  if (!res.ok) {
+    notFound(); // Show 404 if not found
   }
-}
 
-export default async function BlogPost({ params }: Params) {
-  const post: Post | null = await getPost(params.slug);
+  const post: Post | null = await res.json();
 
+  // If post is null, trigger not found
   if (!post) {
-    notFound(); // Trigger a 404 if post is not found
+    notFound();
   }
 
   return <BlogDetail post={post} />;
