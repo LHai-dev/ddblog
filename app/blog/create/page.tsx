@@ -1,7 +1,7 @@
 'use client'; // Ensure this is a Client Component
 
 import React, { useState } from 'react';
-import {ForwardRefEditor} from '@/app/components/ForwardRefEditor' // Dynamically loaded editor
+import {ForwardRefEditor} from '@/app/components/mdx/ForwardRefEditor' // Dynamically loaded editor
 import slugify from 'slugify';
 import { useRouter } from 'next/navigation';
 
