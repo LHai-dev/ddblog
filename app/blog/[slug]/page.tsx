@@ -10,15 +10,14 @@ export interface Params {
   };
 }
 
-// Fetch data in a Server Component
 async function getPost(slug: string): Promise<Post | null> {
   try {
-    // Use an absolute path for fetching in server-side
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000';
+    console.log('Base URL in production:', baseUrl);
     const res = await fetch(`${baseUrl}/api/blogs/${slug}`, { cache: 'no-store' });
 
     if (!res.ok) {
-      console.error('Failed to fetch post:', res.statusText); // Log server error details
+      console.error('Failed to fetch post:', res.status, res.statusText); // Log server error details
       return null;
     }
 

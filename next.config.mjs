@@ -10,6 +10,13 @@ const nextConfig = {
         return config
     },
     images:{
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'ddkhdev.lol',
+                pathname: '/**',
+            },
+        ],
         domains: ['miro.medium.com',"example.com","localhost","res.cloudinary.com"], // Add the domain(s) of your external image source
       }
 };

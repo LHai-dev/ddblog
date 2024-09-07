@@ -7,7 +7,6 @@ import { Post } from '@/app/type/type';
 
 export default function Page() {
   const [posts, setPosts] = useState<Post[]>([]); // Type the posts array
-  const [, setClickCounts] = useState<{ [key: string]: number }>({}); // Track clicks per post
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -16,13 +15,6 @@ export default function Page() {
         const data: Post[] = await res.json();
         setPosts(data);
 
-        // Initialize click count for each post
-        const initialClickCounts = data.reduce((acc: { [key: string]: number }, post) => {
-          acc[post.slug] = 0;
-          return acc;
-        }, {});
-
-        setClickCounts(initialClickCounts);
       } catch (error) {
         console.error('Failed to fetch posts:', error);
       }
