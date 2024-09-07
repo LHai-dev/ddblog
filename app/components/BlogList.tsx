@@ -2,7 +2,7 @@
 'use client'; // Mark this as a Client Component
 
 import { useEffect, useState } from 'react';
-import { Post } from '@/app/type/type';
+import { Post } from '@/app/type/Post';
 import BlogCard from './BlogCard';
 
 export default function BlogList() {

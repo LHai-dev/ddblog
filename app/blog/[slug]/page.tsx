@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { Post } from '@/app/type/type';
+import { Post } from '@/app/type/Post';
 import BlogDetail from '@/app/components/BlogDetail';
 
 export default async function BlogPost({ params }: { params: { slug: string } }) {

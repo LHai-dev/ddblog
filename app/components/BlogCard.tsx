@@ -1,7 +1,7 @@
 // components/BlogCard.tsx
 import Image from 'next/image';
 import Link from 'next/link';
-import { Post } from '@/app/type/type';
+import { Post } from '@/app/type/Post';
 
 interface BlogCardProps {
   post: Post;
