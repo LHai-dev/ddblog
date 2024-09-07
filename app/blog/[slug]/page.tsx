@@ -5,7 +5,7 @@ import BlogDetail from '@/app/components/BlogDetail';
 export default async function BlogPost({ params }: { params: { slug: string } }) {
   try {
     // Fetch the blog post from your API using the slug
-    const res = await fetch(`https://ddkhdev.lol/api/blogs/${params.slug}`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${params.slug}`);
 
     if (!res.ok) {
       console.error('Failed to fetch post:', res.status, res.statusText);
