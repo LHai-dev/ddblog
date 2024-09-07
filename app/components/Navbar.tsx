@@ -1,5 +1,7 @@
 'use client';
 import { useState } from 'react'
+import Image from "next/image";
+import Link from "next/link";
 
 const Navbar = () => {
 
@@ -17,14 +19,14 @@ const Navbar = () => {
       <nav className="bg-white w-full border-b md:border-0 md:static">
           <div className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
               <div className="flex items-center justify-between py-3 md:py-5 md:block">
-                    <a href="/">
-                        <img
+                    <Link href="/">
+                        <Image
                             src="https://miro.medium.com/v2/resize:fill:128:128/4*f7EyGRullh3Ih_2tm3k5xw.png"
                             width={50}
                             height={50}
                             alt="Float UI logo"
                         />
-                    </a>
+                    </Link>
                   <div className="md:hidden">
                       <button className="text-gray-700 outline-none p-2 rounded-md focus:border-gray-400 focus:border"
                           onClick={() => setState(!state)}
@@ -59,7 +61,7 @@ const Navbar = () => {
                   </ul>
               </div>
               <div className="hidden md:inline-block">
-                <a href="javascript:void(0)" className="py-3 px-4 text-white bg-black hover:bg-slate-700 rounded-md shadow">
+                <a href="/blog/create" className="py-3 px-4 text-white bg-black hover:bg-slate-700 rounded-md shadow">
                     Get Started
                 </a>
               </div>

@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Post } from "@/app/type/type";
 
 // Fetch data in a Server Component
-async function getPost(slug) {
+async function getPost(slug: string) {
   const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
   const res = await fetch(`${baseUrl}/api/blogs/${slug}`, { cache: 'no-store' });
 
@@ -14,8 +15,15 @@ async function getPost(slug) {
   return res.json();
 }
 
-export default async function BlogPost({ params }) {
-  const post = await getPost(params.slug);
+// Define the type for params
+interface Params {
+  params: {
+    slug: string;
+  };
+}
+
+export default async function BlogPost({ params }: Params) {
+  const post: Post | null = await getPost(params.slug);
 
   // If post is not found, show 404 page
   if (!post) {
@@ -23,22 +31,22 @@ export default async function BlogPost({ params }) {
   }
 
   return (
-    <div className=" min-h-screen py-10">
-      <div className="container mx-auto max-w-3xl bg-white p-8 shadow-lg rounded-lg">
+    <div className="min-h-screen py-10">
+      <div className="container mx-auto max-w-3xl bg-white p-10 rounded-lg">
         {/* Title */}
-        <h1 className="text-5xl font-bold text-gray-900 mb-4">{post.title}</h1>
+        <h1 className="text-6xl font-bold text-gray-900 mb-6 leading-tight">{post.title}</h1>
 
-        {/* Subtitle and Author */}
-        <div className="flex items-center space-x-3 mb-6">
+        {/* Author and Meta Info */}
+        <div className="flex items-center space-x-4 mb-6">
           <Image
-            src={post.authorImageUrl}
+            src={post.authorImageUrl || '/default-avatar.png'} // Fallback for author image
             alt="Author Image"
-            width={48}
-            height={48}
+            width={50}
+            height={50}
             className="rounded-full"
           />
           <div>
-            <p className="text-lg text-gray-700 font-semibold">{post.author}</p>
+            <p className="text-lg text-gray-900 font-medium">{post.author}</p>
             <p className="text-sm text-gray-500">
               {new Date(post.createdDate).toLocaleDateString('en-US', {
                 month: 'long',
@@ -47,24 +55,39 @@ export default async function BlogPost({ params }) {
               })}
               • 6 min read
             </p>
-            <p className="text-lg text-gray-700 font-semibold">{post.viewCount}</p>
-
           </div>
         </div>
 
+        {/* Featured Image (if available) */}
+        {post.thumbnailUrl && (
+          <div className="mb-6">
+            <Image
+              src={post.thumbnailUrl}
+              alt="Thumbnail Image"
+              width={1200}
+              height={600}
+              className="rounded-lg object-cover"
+            />
+          </div>
+        )}
+
         {/* Blog Content */}
-        <div className="prose prose-lg max-w-none mb-6 text-gray-700">
+        <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed">
           {post.content}
         </div>
 
-        {/* Footer with Interaction */}
-        <div className="flex justify-between items-center text-gray-500 border-t pt-4">
-          <div className="flex space-x-4">
-            <i className="bi bi-bookmark"></i> <span>Bookmark</span>
-            <i className="bi bi-share"></i> <span>Share</span>
+        {/* Footer: Interactions */}
+        <div className="flex justify-between items-center text-gray-600 border-t border-gray-200 pt-6 mt-8">
+          <div className="flex space-x-6">
+            <button className="hover:text-gray-900">
+              <i className="bi bi-bookmark"></i> Bookmark
+            </button>
+            <button className="hover:text-gray-900">
+              <i className="bi bi-share"></i> Share
+            </button>
           </div>
-          <Link href="/contact">
-            {/*<a className="text-blue-500">Contact Us</a>*/}
+          <Link href="/contact" className="text-blue-500 hover:underline">
+            Contact Us
           </Link>
         </div>
       </div>

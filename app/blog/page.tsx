@@ -2,23 +2,26 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import Link from "next/link";
+import Link from 'next/link';
+import { Post } from '@/app/type/type';
 
 export default function Page() {
-  const [posts, setPosts] = useState([]);
-  const [clickCounts, setClickCounts] = useState({}); // Track clicks per post
+  const [posts, setPosts] = useState<Post[]>([]); // Type the posts array
+  const [, setClickCounts] = useState<{ [key: string]: number }>({}); // Track clicks per post
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         const res = await fetch('/api/blogs');
-        const data = await res.json();
+        const data: Post[] = await res.json();
         setPosts(data);
+
         // Initialize click count for each post
-        const initialClickCounts = data.reduce((acc, post) => {
+        const initialClickCounts = data.reduce((acc: { [key: string]: number }, post) => {
           acc[post.slug] = 0;
           return acc;
         }, {});
+
         setClickCounts(initialClickCounts);
       } catch (error) {
         console.error('Failed to fetch posts:', error);
@@ -27,32 +30,6 @@ export default function Page() {
 
     fetchPosts();
   }, []);
-
-  const handleClick = async (slug) => {
-    // Increment the click count for the clicked post
-    setClickCounts((prevCounts) => {
-      const updatedCounts = { ...prevCounts, [slug]: prevCounts[slug] + 1 };
-
-      // If click count reaches 3, reset count and increment viewCount in the backend
-      if (updatedCounts[slug] === 3) {
-        incrementViewCount(slug); // Call the API to increment the view count
-        updatedCounts[slug] = 0; // Reset the click count
-      }
-
-      return updatedCounts;
-    });
-  };
-
-  const incrementViewCount = async (slug) => {
-    try {
-      await fetch(`/api/increment-view-count?slug=${slug}`, {
-        method: 'POST',
-      });
-      console.log('View count incremented for:', slug);
-    } catch (error) {
-      console.error('Failed to increment view count:', error);
-    }
-  };
 
   return (
     <div className="container mx-auto mt-10 px-4">
@@ -65,16 +42,15 @@ export default function Page() {
               <div
                 key={post.slug}
                 className="block mb-8 border-b border-gray-300 pb-6 hover:bg-gray-50 cursor-pointer"
-                onClick={() => handleClick(post.slug)} // Track click events
               >
-                <Link href={`/blog/${post.slug}`} key={post.slug}>
-                  <div className="flex flex-col md:flex-row md:items-center">
+                <Link href={`/blog/${post.slug}`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center">
                     {/* Main Post Content */}
-                    <div className="md:w-10/12">
+                    <div className="w-full sm:w-10/12">
                       <div className="mb-2 flex items-center text-sm text-gray-500">
                         {/* Author Image */}
                         <Image
-                          src={post.authorImageUrl}
+                          src={post?.authorImageUrl || '../../../default-avatar.png'} // Fallback for author image
                           alt="Author Image"
                           width={30}
                           height={30}
@@ -103,9 +79,9 @@ export default function Page() {
                     </div>
 
                     {/* Thumbnail Image */}
-                    <div className="md:w-2/12 md:flex md:justify-end">
+                    <div className="w-full sm:w-2/12 flex justify-center sm:justify-end mt-4 sm:mt-0">
                       <Image
-                        src={post.thumbnailUrl}
+                        src={post?.thumbnailUrl || '../../../default-thumbnail.png'} // Fallback for thumbnail
                         alt="Thumbnail Image"
                         width={120}
                         height={80}

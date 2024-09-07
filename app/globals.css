@@ -1,5 +1,80 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+@import '../node_modules/@mdxeditor/editor/dist/style.css';
+/* Style for Medium-like Editor */
 
+.editor-container {
+    margin-top: 2rem;
+}
 
+.editor-title {
+    border-bottom: 2px solid #e2e8f0; /* Gray border like Medium */
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    line-height: 1.2;
+}
+
+.editor-title:focus {
+    border-color: black; /* Black border on focus */
+}
+
+.editor-content {
+    min-height: 400px; /* Ensures there's space to start typing */
+    padding: 1rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.editor-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-primary {
+    background-color: #1a8917; /* Medium's green color for publish */
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #166f12;
+}
+
+.btn-secondary {
+    background-color: #f2f2f2; /* Light gray for saving drafts */
+    color: black;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+/* Ensure a responsive, full-width layout for small devices */
+@media (max-width: 768px) {
+    .editor-container {
+        padding: 0 1rem;
+    }
+
+    .editor-title {
+        font-size: 2rem;
+    }
+
+    .editor-footer {
+        flex-direction: column;
+    }
+
+    .editor-footer button {
+        width: 100%;
+        margin-top: 1rem;
+    }
+}
