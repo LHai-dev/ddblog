@@ -9,8 +9,3 @@ export interface Post {
   content: string;
   title: string;
 }
-export interface Category{
-  id: number;
-  slug: string;
-  name: string;
-}
