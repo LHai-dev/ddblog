@@ -2,13 +2,20 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Post } from "@/app/type/type";
-import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+
+// Define your own Params type
+export interface Params {
+  params: {
+    slug: string;
+  };
+}
 
 // Fetch data in a Server Component
 async function getPost(slug: string): Promise<Post | null> {
   try {
-    // Use a relative path to fetch the blog post
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/blogs/${slug}`, { cache: 'no-store' });
+    // Use an absolute path for fetching in server-side
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.VERCEL_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/blogs/${slug}`, { cache: 'no-store' });
 
     if (!res.ok) {
       console.error('Failed to fetch post:', res.statusText); // Log server error details
