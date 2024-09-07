@@ -1,17 +1,20 @@
+// next.config.mjs
+import mdx from '@next/mdx';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // // Enable transpiling specific packages (for MDX Editor or other ESM modules)
-    // transpilePackages: ['@mdxeditor/editor'],
-    //
-    // // Enable strict mode for React (recommended)
+    // Enable transpiling specific packages (for MDX Editor or other ESM modules)
+    transpilePackages: ['@mdxeditor/editor'],
+
+    // Enable strict mode for React (recommended)
     reactStrictMode: true,
-    //
-    // // Modify webpack settings
-    // webpack: (config) => {
-    //     // Override experiments if necessary (enabling top-level await)
-    //     config.experiments = { ...config.experiments, topLevelAwait: true };
-    //     return config;
-    // },
+
+    // Modify webpack settings
+    webpack: (config) => {
+        // Override experiments if necessary (enabling top-level await)
+        config.experiments = { ...config.experiments, topLevelAwait: true };
+        return config;
+    },
 
     // Remote image handling: allows loading images from specified domains
     images: {
@@ -34,6 +37,15 @@ const nextConfig = {
             },
         ],
     },
+
+    // MDX configuration
+    pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
 };
 
-export default nextConfig;
+// MDX configuration for ES modules
+const withMDX = mdx({
+    extension: /\.mdx?$/, // Enable .mdx extensions
+});
+
+// Exporting with MDX configuration applied
+export default withMDX(nextConfig);

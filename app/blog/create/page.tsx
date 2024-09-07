@@ -1,9 +1,11 @@
-'use client'; // Ensure this is a Client Component
+'use client';
 
 import React, { useState } from 'react';
-import {ForwardRefEditor} from '@/app/components/mdx/ForwardRefEditor' // Dynamically loaded editor
+import { ForwardRefEditor } from '@/app/components/mdx/ForwardRefEditor';
 import slugify from 'slugify';
 import { useRouter } from 'next/navigation';
+import { MDXProvider } from '@mdx-js/react';
+import type { MDXComponents } from 'mdx/types';
 
 export default function CreateMediumStylePost() {
   const [title, setTitle] = useState('');
@@ -11,14 +13,13 @@ export default function CreateMediumStylePost() {
   const [author, setAuthor] = useState('');
   const [authorImageUrl, setAuthorImageUrl] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
-  const [content, setContent] = useState('## Hello world This is an example post.'); // MDX content
+  const [content, setContent] = useState('## Hello world\nThis is an example post.');
   const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
-  const router = useRouter(); // Next.js router
+  const router = useRouter();
 
   const handleSaveDraft = async () => {
     setIsSavingDraft(true);
-
     const slug = slugify(title, { lower: true, strict: true });
     const createdDate = new Date().toISOString();
 
@@ -55,7 +56,6 @@ export default function CreateMediumStylePost() {
 
   const handlePublish = async () => {
     setIsPublishing(true);
-
     const slug = slugify(title, { lower: true, strict: true });
     const createdDate = new Date().toISOString();
 
@@ -80,7 +80,7 @@ export default function CreateMediumStylePost() {
 
       if (response.ok) {
         console.log('Post published successfully');
-        router.push(`/blog/${slug}`); // Redirect to the newly published post
+        router.push(`/blog/${slug}`);
       } else {
         console.error('Failed to publish post');
       }
@@ -91,9 +91,12 @@ export default function CreateMediumStylePost() {
     }
   };
 
+  const components: MDXComponents = {
+    h2: (props) => <h2 style={{ color: 'blue' }} {...props} />,
+  };
+
   return (
     <div className="editor-container mx-auto max-w-4xl mt-10 px-4">
-      {/* Title Input */}
       <input
         type="text"
         value={title}
@@ -102,7 +105,6 @@ export default function CreateMediumStylePost() {
         className="editor-title w-full text-5xl font-bold outline-none border-b-2 focus:border-black mb-6"
       />
 
-      {/* Summary Input */}
       <input
         type="text"
         value={summary}
@@ -111,25 +113,25 @@ export default function CreateMediumStylePost() {
         className="editor-summary w-full text-lg outline-none border-b-2 focus:border-black mb-6"
       />
 
-      {/* Author Input */}
       <input
+        hidden
         type="text"
-        value={author}
+        value={author || "Lim Hai"}
         onChange={(e) => setAuthor(e.target.value)}
         placeholder="Author Name"
         className="editor-author w-full text-lg outline-none border-b-2 focus:border-black mb-6"
       />
 
-      {/* Author Image URL Input */}
       <input
+        hidden
         type="text"
-        value={authorImageUrl}
+        value={authorImageUrl || "https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd"}
         onChange={(e) => setAuthorImageUrl(e.target.value)}
         placeholder="Author Image URL"
         className="editor-author-image w-full text-lg outline-none border-b-2 focus:border-black mb-6"
       />
 
-      {/* Thumbnail URL Input */}
+
       <input
         type="text"
         value={thumbnailUrl}
@@ -138,18 +140,21 @@ export default function CreateMediumStylePost() {
         className="editor-thumbnail w-full text-lg outline-none border-b-2 focus:border-black mb-6"
       />
 
-      {/* Editor Content */}
       <div className="editor-content mb-8">
         <ForwardRefEditor
           markdown={content}
           onChange={(mdxContent: string) => setContent(mdxContent)}
           placeholder="Write your story..."
-          autoFocus={true}  // Keep autofocus
+          autoFocus={true}
         />
       </div>
 
+      <div className="rendered-content mb-8">
+        <MDXProvider components={components}>
+          <div>{content}</div>
+        </MDXProvider>
+      </div>
 
-      {/* Save/Publish Buttons */}
       <div className="editor-footer flex justify-between items-center">
         <button
           onClick={handleSaveDraft}

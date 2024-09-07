@@ -5,9 +5,10 @@ import { forwardRef } from 'react';
 import type { MDXEditorMethods, MDXEditorProps } from '@mdxeditor/editor';
 
 // Dynamically import the InitializedMDXEditor component, with SSR disabled
-const Editor = dynamic(() => import('./InitializedMDXEditor'), {
-  ssr: false, // Disable Server-Side Rendering
-});
+const Editor = dynamic(
+  () => import('./InitializedMDXEditor').then((mod) => mod.default || mod), // Ensure we handle default or named export
+  { ssr: false } // Disable Server-Side Rendering
+);
 
 // Forward reference to the editor instance, if needed
 export const ForwardRefEditor = forwardRef<MDXEditorMethods, MDXEditorProps>((props, ref) => (

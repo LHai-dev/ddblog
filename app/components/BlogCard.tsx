@@ -39,17 +39,17 @@ export default function BlogCard({ post }: BlogCardProps) {
             {/* Date */}
             <p className="mt-1 text-sm text-gray-500 flex items-center space-x-2">
               {/* Read Icon */}
-              <AiOutlineRead className="mr-1" />
+              <CiTimer className="ml-2" />
 
               {/* Date */}
               {new Date(post.createdDate).toLocaleDateString('en-US', {
                 month: 'short',
                 day: 'numeric',
               })}
+              <AiOutlineRead className="mr-1" />
 
               {/* Additional Icons */}
               <CiRead className="ml-2" />
-              <CiTimer className="ml-2" />
             </p>
 
             {/* Post Actions */}
