@@ -3,7 +3,7 @@ import type {Metadata} from "next";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Banner from "@/app/components/Banners";
-
+export const runtime = "edge";
 // const geistSans = localFont({
 //   src: "./fonts/GeistVF.woff",
 //   variable: "--font-geist-sans",

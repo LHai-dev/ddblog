@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pages:build": "npx @cloudflare/next-on-pages"
+
   },
   "dependencies": {
     "@libsql/client": "^0.10.0",
@@ -22,6 +24,7 @@
     "slugify": "^1.6.6"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
