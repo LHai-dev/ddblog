@@ -10,7 +10,7 @@ const nextConfig = {
         return config
     },
     images:{
-        domains: ['miro.medium.com',"example.com","localhost"], // Add the domain(s) of your external image source
+        domains: ['miro.medium.com',"example.com","localhost","res.cloudinary.com"], // Add the domain(s) of your external image source
       }
 };
 
