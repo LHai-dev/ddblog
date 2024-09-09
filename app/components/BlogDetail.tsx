@@ -1,4 +1,4 @@
-'use client';
+'use client'; // Enable client-side rendering for this component
 
 import Image from 'next/image';
 import { MDXRemote } from 'next-mdx-remote';
@@ -12,7 +12,7 @@ interface BlogDetailProps {
 
 export default function BlogDetail({ post, mdxSource }: BlogDetailProps) {
   return (
-    <div className="min-h-screen  py-10">
+    <div className="min-h-screen py-10">
       <div className="container mx-auto max-w-4xl bg-white p-6 md:p-10 rounded-lg">
         {/* Blog Title */}
         <h1 className="text-4xl font-bold mb-6">{post.title}</h1>
@@ -38,23 +38,25 @@ export default function BlogDetail({ post, mdxSource }: BlogDetailProps) {
           </div>
         </div>
 
-        {/* Thumbnail Image */}
-        {post.thumbnailUrl && (
-          <div className="mb-6">
-            <Image
-              src={post.thumbnailUrl}
-              alt="Post Thumbnail"
-              layout="responsive"
-              width={1200}
-              height={600}
-              className="rounded-lg object-cover"
-            />
-          </div>
-        )}
+        {/*/!* Thumbnail Image *!/*/}
+        {/*  <div className="mb-6">*/}
+        {/*    <Image*/}
+        {/*      src={post.thumbnailUrl}*/}
+        {/*      alt="Post Thumbnail"*/}
+        {/*      width={1200}*/}
+        {/*      height={600}*/}
+        {/*      className="rounded-lg object-cover"*/}
+        {/*    />*/}
+        {/*  </div>*/}
+
 
         {/* Blog Content */}
         <div className="prose prose-lg max-w-none text-gray-800">
-          <MDXRemote {...mdxSource} />
+          {mdxSource ? (
+            <MDXRemote {...mdxSource} />
+          ) : (
+            <p>Content is loading or unavailable.</p>
+          )}
         </div>
 
         {/* Footer with Interactions */}

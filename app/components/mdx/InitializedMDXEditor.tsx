@@ -1,4 +1,4 @@
-'use client'; // Ensure this is a client component
+'use client';
 
 import { ForwardedRef } from 'react';
 import {
@@ -32,18 +32,15 @@ import {
   CreateLink,
   CodeToggle
 } from '@mdxeditor/editor';
-import '@mdxeditor/editor/style.css';
+import '@mdxeditor/editor/style.css'; // Import the editor's CSS for proper styling
 
 export default function InitializedMDXEditor({
                                                editorRef,
                                                ...props
                                              }: { editorRef: ForwardedRef<MDXEditorMethods> | null } & MDXEditorProps) {
-
-
   return (
     <MDXEditor
       plugins={[
-        // Essential plugins for headings, lists, quotes, code blocks, etc.
         headingsPlugin(),
         listsPlugin(),
         quotePlugin(),
@@ -63,45 +60,20 @@ export default function InitializedMDXEditor({
         directivesPlugin({
           directiveDescriptors: [AdmonitionDirectiveDescriptor], // Enables admonitions
         }),
-
-        // Toolbar plugin with all desired components
         toolbarPlugin({
           toolbarContents: () => (
             <>
-              {/* Undo/Redo */}
               <UndoRedo />
-
-              {/* Bold, Italic, Underline toggles */}
               <BoldItalicUnderlineToggles />
-
-              {/* Block Type Select for headings, blockquotes, etc. */}
               <BlockTypeSelect />
-
-              {/* Lists Toggle for bulleted/numbered lists */}
               <ListsToggle />
-
-              {/* Insert Admonitions (note, tip, caution, etc.) */}
               <InsertAdmonition />
-
-              {/* Insert Thematic Break (HR) */}
               <InsertThematicBreak />
-
-              {/* Insert Table */}
               <InsertTable />
-
-              {/* Insert Image */}
               <InsertImage />
-
-              {/* Insert Code Block */}
               <InsertCodeBlock />
-
-              {/* Code Toggle for inline code */}
               <CodeToggle />
-
-              {/* Link Creation */}
               <CreateLink />
-
-              {/* Language Change for Code Block */}
               <ConditionalContents
                 options={[
                   {

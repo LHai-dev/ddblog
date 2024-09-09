@@ -35,6 +35,11 @@ const nextConfig = {
                 hostname: 'res.cloudinary.com', // Cloudinary image hosting
                 pathname: '/**',
             },
+            {
+                protocol: 'https',
+                hostname: 'cdn-images-1.readmedium.com',
+                pathname: '/**'
+            }
         ],
     },
 

@@ -1,98 +1,73 @@
-'use client';
+"use client";
 
 import React, { useState } from 'react';
 import { ForwardRefEditor } from '@/app/components/mdx/ForwardRefEditor';
 import slugify from 'slugify';
 import { useRouter } from 'next/navigation';
-import { MDXProvider } from '@mdx-js/react';
-import type { MDXComponents } from 'mdx/types';
 
 export default function CreateMediumStylePost() {
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
-  const [author, setAuthor] = useState('');
-  const [authorImageUrl, setAuthorImageUrl] = useState('');
+  const [author, setAuthor] = useState('LimHai');
+  const [authorImageUrl, setAuthorImageUrl] = useState('https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
   const [content, setContent] = useState('## Hello world\nThis is an example post.');
-  const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [isSavingDraft] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
+  const [authorImageFile] = useState<File | null>(null);
+  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
+  const [useThumbnailUrl, setUseThumbnailUrl] = useState(true); // Toggle for thumbnail
+  const [useImageUrl] = useState(true); // Toggle for author image
   const router = useRouter();
 
-  const handleSaveDraft = async () => {
-    setIsSavingDraft(true);
-    const slug = slugify(title, { lower: true, strict: true });
-    const createdDate = new Date().toISOString();
-
-    const draftPost = {
-      slug,
-      title,
-      summary,
-      author,
-      authorImageUrl,
-      thumbnailUrl,
-      content,
-      createdDate,
-      status: 'draft',
-    };
-
-    try {
-      const response = await fetch('/api/blogs/drafts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(draftPost),
-      });
-
-      if (response.ok) {
-        console.log('Draft saved successfully');
-      } else {
-        console.error('Failed to save draft');
-      }
-    } catch (error) {
-      console.error('Error saving draft:', error);
-    } finally {
-      setIsSavingDraft(false);
-    }
-  };
-
-  const handlePublish = async () => {
+  // Handle form submission and upload images in the same request
+  const handleFormSubmit = async (status: string) => {
     setIsPublishing(true);
     const slug = slugify(title, { lower: true, strict: true });
     const createdDate = new Date().toISOString();
 
-    const publishedPost = {
-      slug,
-      title,
-      summary,
-      author,
-      authorImageUrl,
-      thumbnailUrl,
-      content,
-      createdDate,
-      status: 'published',
-    };
+    // Create FormData for combining both image files and other form data
+    const formData = new FormData();
+    formData.append('slug', slug);
+    formData.append('title', title);
+    formData.append('summary', summary);
+    formData.append('author', author);
+    formData.append('content', content);
+    formData.append('createdDate', createdDate);
+    formData.append('status', status);
+
+    // Check if user is entering URL or uploading a file for author image
+    if (useImageUrl) {
+      formData.append('authorImageUrl', authorImageUrl);
+    } else if (authorImageFile) {
+      formData.append('authorImageFile', authorImageFile);
+    }
+
+    // Check if user is entering URL or uploading a file for thumbnail
+    if (useThumbnailUrl) {
+      formData.append('thumbnailUrl', thumbnailUrl);
+    } else if (thumbnailFile) {
+      formData.append('thumbnailFile', thumbnailFile);
+    }
 
     try {
       const response = await fetch('/api/blogs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(publishedPost),
+        body: formData,
       });
 
       if (response.ok) {
-        console.log('Post published successfully');
+        const data = await response.json();
+        console.log('Post submitted successfully:', data);
         router.push(`/blog/${slug}`);
       } else {
-        console.error('Failed to publish post');
+        console.error('Failed to submit post');
       }
     } catch (error) {
-      console.error('Error publishing post:', error);
+      console.error('Error submitting post:', error);
     } finally {
       setIsPublishing(false);
     }
-  };
-
-  const components: MDXComponents = {
-    h2: (props) => <h2 style={{ color: 'blue' }} {...props} />,
   };
 
   return (
@@ -122,23 +97,52 @@ export default function CreateMediumStylePost() {
         className="editor-author w-full text-lg outline-none border-b-2 focus:border-black mb-6"
       />
 
-      <input
-        hidden
-        type="text"
-        value={authorImageUrl || "https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd"}
-        onChange={(e) => setAuthorImageUrl(e.target.value)}
-        placeholder="Author Image URL"
-        className="editor-author-image w-full text-lg outline-none border-b-2 focus:border-black mb-6"
-      />
+
+        <input
+          hidden
+          type="text"
+          value={authorImageUrl}
+          onChange={(e) => setAuthorImageUrl(e.target.value)}
+          placeholder="Author Image URL"
+          className="editor-author-image w-full text-lg outline-none border-b-2 focus:border-black mb-6"
+        />
 
 
-      <input
-        type="text"
-        value={thumbnailUrl}
-        onChange={(e) => setThumbnailUrl(e.target.value)}
-        placeholder="Thumbnail Image URL"
-        className="editor-thumbnail w-full text-lg outline-none border-b-2 focus:border-black mb-6"
-      />
+      {/* Toggle between URL input and file upload for thumbnail image */}
+      <div className="mb-4">
+        <label className="mr-4">
+          <input
+            type="radio"
+            checked={useThumbnailUrl}
+            onChange={() => setUseThumbnailUrl(true)}
+          />
+          Use Thumbnail URL
+        </label>
+        <label>
+          <input
+            type="radio"
+            checked={!useThumbnailUrl}
+            onChange={() => setUseThumbnailUrl(false)}
+          />
+          Upload Thumbnail Image
+        </label>
+      </div>
+
+      {useThumbnailUrl ? (
+        <input
+          type="text"
+          value={thumbnailUrl}
+          onChange={(e) => setThumbnailUrl(e.target.value)}
+          placeholder="Thumbnail Image URL"
+          className="editor-thumbnail w-full text-lg outline-none border-b-2 focus:border-black mb-6"
+        />
+      ) : (
+        <input
+          type="file"
+          onChange={(e) => setThumbnailFile(e.target.files ? e.target.files[0] : null)}
+          className="mb-6"
+        />
+      )}
 
       <div className="editor-content mb-8">
         <ForwardRefEditor
@@ -146,18 +150,13 @@ export default function CreateMediumStylePost() {
           onChange={(mdxContent: string) => setContent(mdxContent)}
           placeholder="Write your story..."
           autoFocus={true}
+          suppressHtmlProcessing={true}
         />
-      </div>
-
-      <div className="rendered-content mb-8">
-        <MDXProvider components={components}>
-          <div>{content}</div>
-        </MDXProvider>
       </div>
 
       <div className="editor-footer flex justify-between items-center">
         <button
-          onClick={handleSaveDraft}
+          onClick={() => handleFormSubmit('draft')}
           disabled={isSavingDraft}
           className="btn-secondary"
         >
@@ -165,7 +164,7 @@ export default function CreateMediumStylePost() {
         </button>
 
         <button
-          onClick={handlePublish}
+          onClick={() => handleFormSubmit('published')}
           disabled={isPublishing}
           className="btn-secondary"
         >
