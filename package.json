@@ -12,6 +12,7 @@
   "dependencies": {
     "@libsql/client": "^0.10.0",
     "@mdxeditor/editor": "^3.11.3",
+    "@next/mdx": "^14.2.8",
     "ddblog": "file:",
     "next": "14.2.8",
     "react": "^18",
