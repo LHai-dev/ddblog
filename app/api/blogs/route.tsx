@@ -39,6 +39,7 @@ export async function GET() {
   }
 }
 
+
 export async function POST(req: Request): Promise<Response> {
   try {
     const formData = await req.formData();
@@ -48,7 +49,7 @@ export async function POST(req: Request): Promise<Response> {
     const summary = formData.get('summary') as string;
     const content = formData.get('content') as string;
     const createdDate = new Date().toISOString();
-    const slug = slugify(title, {lower: true, strict: true});
+    const slug = slugify(title, { lower: true, strict: true });
     const authorImageUrl = formData.get('authorImageUrl') || 'https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd';  // Default image URL if missing
 
     // Handle `thumbnailUrl` as BLOB
@@ -60,24 +61,31 @@ export async function POST(req: Request): Promise<Response> {
       thumbnailBase64 = `data:image/jpeg;base64,${thumbnailBlob.toString('base64')}`; // Add base64 prefix
     }
 
+    // Sanitize input values before concatenating them into the query
+    const sanitizedSlug = slug.replace(/'/g, "''");
+    const sanitizedAuthor = author.replace(/'/g, "''");
+    const sanitizedTitle = title.replace(/'/g, "''");
+    const sanitizedSummary = summary.replace(/'/g, "''");
+    const sanitizedContent = content.replace(/'/g, "''");
+
+    // Build the query string manually
     const query = `
       INSERT INTO blogs (slug, author, authorImageUrl, title, summary, createdDate, thumbnailUrl, content)
-      VALUES ('${slug}', '${author}', '${authorImageUrl}', '${title}', '${summary}', '${createdDate}', '${thumbnailBase64}', '${content}')
+      VALUES ('${sanitizedSlug}', '${sanitizedAuthor}', '${authorImageUrl}', '${sanitizedTitle}', '${sanitizedSummary}', '${createdDate}', '${thumbnailBase64}', '${sanitizedContent}')
     `;
 
     // Execute the query
     await turso.execute(query);
 
-    return new Response(JSON.stringify({message: 'Blog created successfully'}), {
+    return new Response(JSON.stringify({ message: 'Blog created successfully' }), {
       status: 201,
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
     console.error('Error creating blog post:', error);
-    return new Response(JSON.stringify({error: 'Failed to create blog post'}), {
+    return new Response(JSON.stringify({ error: 'Failed to create blog post' }), {
       status: 500,
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
     });
   }
 }
-

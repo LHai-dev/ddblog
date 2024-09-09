@@ -1,9 +1,14 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import { ForwardRefEditor } from '@/app/components/mdx/ForwardRefEditor';
 import slugify from 'slugify';
 import { useRouter } from 'next/navigation';
+
+// Function to generate a 9-digit random number
+function generateUniqueId() {
+  return Math.floor(Math.random() * 1_000_000_000).toString();
+}
 
 export default function CreateMediumStylePost() {
   const [title, setTitle] = useState('');
@@ -23,7 +28,9 @@ export default function CreateMediumStylePost() {
   // Handle form submission and upload images in the same request
   const handleFormSubmit = async (status: string) => {
     setIsPublishing(true);
-    const slug = slugify(title, { lower: true, strict: true });
+    const slugBase = slugify(title, { lower: true, strict: true });
+    const uniqueId = generateUniqueId();
+    const slug = `${slugBase}-${uniqueId}`;
     const createdDate = new Date().toISOString();
 
     // Create FormData for combining both image files and other form data
@@ -91,22 +98,20 @@ export default function CreateMediumStylePost() {
       <input
         hidden
         type="text"
-        value={author || "Lim Hai"}
+        value={author || 'Lim Hai'}
         onChange={(e) => setAuthor(e.target.value)}
         placeholder="Author Name"
         className="editor-author w-full text-lg outline-none border-b-2 focus:border-black mb-6"
       />
 
-
-        <input
-          hidden
-          type="text"
-          value={authorImageUrl}
-          onChange={(e) => setAuthorImageUrl(e.target.value)}
-          placeholder="Author Image URL"
-          className="editor-author-image w-full text-lg outline-none border-b-2 focus:border-black mb-6"
-        />
-
+      <input
+        hidden
+        type="text"
+        value={authorImageUrl}
+        onChange={(e) => setAuthorImageUrl(e.target.value)}
+        placeholder="Author Image URL"
+        className="editor-author-image w-full text-lg outline-none border-b-2 focus:border-black mb-6"
+      />
 
       {/* Toggle between URL input and file upload for thumbnail image */}
       <div className="mb-4">
