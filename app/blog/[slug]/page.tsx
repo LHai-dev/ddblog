@@ -6,6 +6,7 @@ import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import SEO from '@/app/components/Head'; // Use your SEO component
 import siteMetadata from "@/app/lib/siteMetaData"; // Consistent import
 import Script from 'next/script';
+import {calculateReadingTime} from "@/app/lib/readingTimeUtil";
 
 export const runtime = "edge"; // Running on edge runtime
 
@@ -32,6 +33,7 @@ export default async function BlogSlug({ params }: { params: { slug: string } })
   const postTitle = post.title || 'Untitled Post';
   const postSummary = post.summary || 'Read this exciting blog post';
   const postImage = post.thumbnailUrl || `${siteMetadata.siteUrl}${siteMetadata.socialBanner}`;
+  const readTime = calculateReadingTime(post.content);
 
   // JSON-LD structured data for SEO
   const jsonLd = {
@@ -66,7 +68,7 @@ export default async function BlogSlug({ params }: { params: { slug: string } })
       />
 
       {/* Pass data to BlogDetail client component */}
-      <BlogDetail post={post} mdxSource={mdxSource} />
+      <BlogDetail post={post} mdxSource={mdxSource}   readTime={readTime}/>
     </>
   );
 }

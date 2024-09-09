@@ -1,26 +1,64 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
 @layer base {
     h1 {
-        @apply text-3xl;
+        @apply text-3xl font-bold leading-tight my-4;
     }
     h2 {
-        @apply text-2xl;
+        @apply text-2xl font-bold leading-tight my-4;
     }
     h3 {
-        @apply text-xl;
+        @apply text-xl font-semibold leading-tight my-4;
     }
     h4 {
-        @apply text-lg;
+        @apply text-lg font-semibold leading-tight my-3;
     }
     h5 {
-        @apply text-base;
+        @apply text-base font-semibold my-2;
     }
     h6 {
-        @apply text-sm;
+        @apply text-sm font-semibold my-2;
     }
 }
+
+@layer base {
+    a {
+        @apply text-blue-600 hover:text-blue-800 underline;
+    }
+}
+@layer base {
+    table {
+        @apply table-auto w-full my-6;
+    }
+    th {
+        @apply text-left font-bold border px-4 py-2;
+    }
+    td {
+        @apply border px-4 py-2;
+    }
+}
+@layer base {
+    code {
+        @apply bg-gray-200 px-1 py-0.5 rounded;
+    }
+    pre {
+        @apply bg-gray-900 text-white p-4 rounded-lg my-4 overflow-x-auto;
+    }
+}
+@layer base {
+    ul {
+        @apply list-disc pl-5 my-4;
+    }
+    ol {
+        @apply list-decimal pl-5 my-4;
+    }
+    li {
+        @apply my-2;
+    }
+}
+
 * {
     font-family: var(--font-notoSansKhmer), sans-serif;
 }

@@ -7,7 +7,7 @@ const siteMetaData = {
   theme: 'light', // system, dark or light
   siteUrl: 'https://ddkhdev.lol',
   siteLogo: '/logo.png',
-  socialBanner: '/social-banner.png',
+  socialBanner: '/logo.png',
   email: 'limhaifc@gmail.com',
   github: 'https://github.com/LHai-dev',
   twitter: 'https://twitter.com/hai172',

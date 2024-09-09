@@ -39,55 +39,57 @@ export default function InitializedMDXEditor({
                                                ...props
                                              }: { editorRef: ForwardedRef<MDXEditorMethods> | null } & MDXEditorProps) {
   return (
-    <MDXEditor
-      plugins={[
-        headingsPlugin(),
-        listsPlugin(),
-        quotePlugin(),
-        thematicBreakPlugin(),
-        markdownShortcutPlugin(),
-        linkPlugin(),
-        imagePlugin(),
-        codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
-        codeMirrorPlugin({
-          codeBlockLanguages: {
-            js: 'JavaScript',
-            css: 'CSS',
-            java: 'Java',
-          },
-        }),
-        tablePlugin(),
-        directivesPlugin({
-          directiveDescriptors: [AdmonitionDirectiveDescriptor], // Enables admonitions
-        }),
-        toolbarPlugin({
-          toolbarContents: () => (
-            <>
-              <UndoRedo />
-              <BoldItalicUnderlineToggles />
-              <BlockTypeSelect />
-              <ListsToggle />
-              <InsertAdmonition />
-              <InsertThematicBreak />
-              <InsertTable />
-              <InsertImage />
-              <InsertCodeBlock />
-              <CodeToggle />
-              <CreateLink />
-              <ConditionalContents
-                options={[
-                  {
-                    when: (editor) => editor?.editorType === 'code-block',
-                    contents: () => <ChangeCodeMirrorLanguage />,
-                  },
-                ]}
-              />
-            </>
-          ),
-        }),
-      ]}
-      {...props}
-      ref={editorRef}
-    />
+    <div className="prose prose-lg max-w-none"> {/* Apply typography styles */}
+      <MDXEditor
+        plugins={[
+          headingsPlugin(),
+          listsPlugin(),
+          quotePlugin(),
+          thematicBreakPlugin(),
+          markdownShortcutPlugin(),
+          linkPlugin(),
+          imagePlugin(),
+          codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
+          codeMirrorPlugin({
+            codeBlockLanguages: {
+              js: 'JavaScript',
+              css: 'CSS',
+              java: 'Java',
+            },
+          }),
+          tablePlugin(),
+          directivesPlugin({
+            directiveDescriptors: [AdmonitionDirectiveDescriptor],
+          }),
+          toolbarPlugin({
+            toolbarContents: () => (
+              <>
+                <UndoRedo />
+                <BoldItalicUnderlineToggles />
+                <BlockTypeSelect />
+                <ListsToggle />
+                <InsertAdmonition />
+                <InsertThematicBreak />
+                <InsertTable />
+                <InsertImage />
+                <InsertCodeBlock />
+                <CodeToggle />
+                <CreateLink />
+                <ConditionalContents
+                  options={[
+                    {
+                      when: (editor) => editor?.editorType === 'code-block',
+                      contents: () => <ChangeCodeMirrorLanguage />,
+                    },
+                  ]}
+                />
+              </>
+            ),
+          }),
+        ]}
+        {...props}
+        ref={editorRef}
+      />
+    </div>
   );
 }

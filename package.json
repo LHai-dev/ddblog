@@ -13,6 +13,7 @@
     "@libsql/client": "^0.10.0",
     "@mdxeditor/editor": "^3.11.3",
     "@next/mdx": "^14.2.8",
+    "@tailwindcss/typography": "^0.5.15",
     "ddblog": "file:",
     "next": "14.2.8",
     "next-mdx-remote": "^5.0.0",
