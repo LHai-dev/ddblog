@@ -1,4 +1,5 @@
-
+// next.config.mjs
+import mdx from '@next/mdx';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -34,11 +35,6 @@ const nextConfig = {
                 hostname: 'res.cloudinary.com', // Cloudinary image hosting
                 pathname: '/**',
             },
-            {
-                protocol: 'https',
-                hostname: 'cdn-images-1.readmedium.com',
-                pathname: '/**'
-            }
         ],
     },
 
@@ -46,4 +42,10 @@ const nextConfig = {
     pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
 };
 
-export default nextConfig;
+// MDX configuration for ES modules
+const withMDX = mdx({
+    extension: /\.mdx?$/, // Enable .mdx extensions
+});
+
+// Exporting with MDX configuration applied
+export default withMDX(nextConfig);
