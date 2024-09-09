@@ -1,19 +1,19 @@
-import siteMetadata from "@/app/lib/siteMetaData";
+// app/layout.tsx (RootLayout)
 import "./globals.css";
-import Navbar from "./components/Navbar";
-import Banner from "@/app/components/Banners";
+import Navbar from "@/app/components/Navbar";
 import React from "react";
-import { Noto_Sans_Khmer } from 'next/font/google'
+import { Noto_Sans_Khmer } from 'next/font/google';
+import Banner from "@/app/components/Banners";
+import siteMetadata from "@/app/lib/siteMetaData"; // Consistent import
 
 export const runtime = "edge";
 
-// Uncomment the font loading section if you plan to use custom fonts
+// Load custom font
 const notoSansKhmer = Noto_Sans_Khmer({
-    subsets: ['latin'],
-    display: 'swap',
-    //👇 Add variable to our object
-    variable: '--font-notoSansKhmer',
-  })
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-notoSansKhmer',
+});
 
 export const metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -48,21 +48,14 @@ export const metadata = {
       "max-snippet": -1,
     },
   },
-  // Optional canonical URL to prevent duplicate content
   alternates: {
     canonical: siteMetadata.siteUrl,
   },
 };
 
-export default function RootLayout({
-                                     children,
-                                   }: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en"
-    className={`${notoSansKhmer.variable} font-sans`}
-    >
+    <html lang="en" className={`${notoSansKhmer.variable} font-sans`}>
     <body>
     <Navbar />
     <Banner />

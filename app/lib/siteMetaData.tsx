@@ -1,4 +1,4 @@
-const siteMetadata = {
+const siteMetaData = {
   title: 'ddkh-blog',
   author: 'Lim-Hai',
   headerTitle: 'Next.js Blog',
@@ -16,4 +16,4 @@ const siteMetadata = {
   locale: 'en-US',
 };
 
-export default siteMetadata; // Use ES module export
+export default siteMetaData; // Use ES module export
