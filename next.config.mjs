@@ -1,5 +1,4 @@
-// next.config.mjs
-import mdx from '@next/mdx';
+
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -47,10 +46,4 @@ const nextConfig = {
     pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
 };
 
-// MDX configuration for ES modules
-const withMDX = mdx({
-    extension: /\.mdx?$/, // Enable .mdx extensions
-});
-
-// Exporting with MDX configuration applied
-export default withMDX(nextConfig);
+export default nextConfig;
