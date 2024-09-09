@@ -1,15 +1,15 @@
-// app/blog/[slug]/page.tsx (Server Component)
 import { notFound } from 'next/navigation';
 import { Post } from '@/app/type/Post';
 import BlogDetail from '@/app/components/BlogDetail'; // Client component
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import Head from 'next/head';
+import SEO from '@/app/components/Head'; // Use your SEO component
 import siteMetadata from "@/app/lib/siteMetaData"; // Consistent import
+import Script from 'next/script';
 
 export const runtime = "edge"; // Running on edge runtime
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
+export default async function BlogSlug({ params }: { params: { slug: string } }) {
   // Fetch the blog post from your API using the slug
   const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
 
@@ -22,6 +22,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
   const post: Post | null = await res.json();
   if (!post) {
     notFound(); // Display 404 page if the post is null
+    return;
   }
 
   // Serialize the MDX content using next-mdx-remote
@@ -31,23 +32,38 @@ export default async function BlogPost({ params }: { params: { slug: string } })
   const postTitle = post.title || 'Untitled Post';
   const postSummary = post.summary || 'Read this exciting blog post';
   const postImage = post.thumbnailUrl || `${siteMetadata.siteUrl}${siteMetadata.socialBanner}`;
-  const postUrl = `${siteMetadata.siteUrl}/blog/${post.slug}`;
+
+  // JSON-LD structured data for SEO
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": postTitle,
+    "image": postImage,
+    "author": {
+      "@type": "Person",
+      "name": post.author || "Unknown Author"
+    },
+    "datePublished": post.createdDate || "2024-01-01",
+    "dateModified": post.createdDate || "2024-01-01",
+    "description": postSummary,
+    "url": `${siteMetadata.siteUrl}/blog/${post.slug}`
+  };
 
   return (
     <>
-      {/* Dynamic SEO */}
-      <Head>
-        <title>{postTitle} | {siteMetadata.title}</title>
-        <meta name="description" content={postSummary} />
-        <meta property="og:title" content={postTitle} />
-        <meta property="og:description" content={postSummary} />
-        <meta property="og:image" content={postImage} />
-        <meta property="og:url" content={postUrl} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={postTitle} />
-        <meta name="twitter:description" content={postSummary} />
-        <meta name="twitter:image" content={postImage} />
-      </Head>
+      {/* Use your dynamic SEO component */}
+      <SEO
+        title={`${postTitle} | ${siteMetadata.title}`}
+        description={postSummary}
+        imageUrl={postImage}
+      />
+
+      {/* Inject JSON-LD structured data for the blog post */}
+      <Script
+        id="blog-post-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* Pass data to BlogDetail client component */}
       <BlogDetail post={post} mdxSource={mdxSource} />
