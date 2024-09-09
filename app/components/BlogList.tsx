@@ -1,9 +1,9 @@
-// app/components/BlogList.tsx
 'use client'; // Mark this as a Client Component
 
 import { useEffect, useState } from 'react';
 import { Post } from '@/app/type/Post';
 import BlogCard from './BlogCard';
+import { calculateReadingTime } from '@/app/lib/readingTimeUtil'; // Ensure you import the helper function
 
 export default function BlogList() {
   const [posts, setPosts] = useState<Post[]>([]); // Type the posts array
@@ -14,7 +14,7 @@ export default function BlogList() {
     const fetchPosts = async () => {
       try {
         const res = await fetch('/api/blogs'); // Make sure this API endpoint is working
-        if (!res.ok) new Error('Failed to fetch posts');
+        if (!res.ok) throw new Error('Failed to fetch posts');
         const data: Post[] = await res.json();
         setPosts(data);
       } catch (error) {
@@ -43,7 +43,11 @@ export default function BlogList() {
           {posts.length === 0 ? (
             <p className="text-center text-gray-500">No posts found.</p>
           ) : (
-            posts.map((post) => <BlogCard key={post.slug} post={post} />)
+            posts.map((post) => {
+              // Calculate reading time for each post
+              const readTime = calculateReadingTime(post.content);
+              return <BlogCard key={post.slug} post={post} readTime={readTime} />;
+            })
           )}
         </div>
       </div>

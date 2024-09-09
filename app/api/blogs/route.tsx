@@ -4,7 +4,7 @@ import slugify from 'slugify';
 export async function GET() {
   try {
     // Fetch blogs from the database, including the BLOB field for the thumbnail
-    const blogs = await turso.execute('SELECT author, title, summary, createdDate, slug, thumbnailUrl, authorImageUrl FROM blogs');
+    const blogs = await turso.execute('SELECT author, title, summary, createdDate, slug, thumbnailUrl, authorImageUrl,content FROM blogs');
 
     // Process the blogs and convert the thumbnailUrl BLOB (ArrayBuffer) back to a base64 string if it's a BLOB
     const processedBlogs = await Promise.all(blogs.rows.map(async (blog) => {
