@@ -3,19 +3,17 @@ import "./globals.css";
 import Navbar from "./components/Navbar";
 import Banner from "@/app/components/Banners";
 import React from "react";
+import { Noto_Sans_Khmer } from 'next/font/google'
+
 export const runtime = "edge";
 
 // Uncomment the font loading section if you plan to use custom fonts
-// const geistSans = localFont({
-//   src: "./fonts/GeistVF.woff",
-//   variable: "--font-geist-sans",
-//   weight: "100 900",
-// });
-// const geistMono = localFont({
-//   src: "./fonts/GeistMonoVF.woff",
-//   variable: "--font-geist-mono",
-//   weight: "100 900",
-// });
+const notoSansKhmer = Noto_Sans_Khmer({
+    subsets: ['latin'],
+    display: 'swap',
+    //👇 Add variable to our object
+    variable: '--font-notoSansKhmer',
+  })
 
 export const metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -62,7 +60,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en"
+    className={`${notoSansKhmer.variable} font-sans`}
+    >
     <body>
     <Navbar />
     <Banner />

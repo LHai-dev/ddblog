@@ -21,6 +21,10 @@
         @apply text-sm;
     }
 }
+* {
+    font-family: var(--font-notoSansKhmer), sans-serif;
+}
+
 .editor-container {
     margin-top: 2rem;
 }
