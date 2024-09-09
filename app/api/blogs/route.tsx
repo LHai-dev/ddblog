@@ -1,5 +1,6 @@
 import {turso} from '../../lib/turso';
 import slugify from 'slugify';
+
 export async function GET() {
   try {
     // Fetch blogs from the database, including the BLOB field for the thumbnail
@@ -32,9 +33,9 @@ export async function GET() {
     }));
 
     // Return the processed blogs as a JSON response
-    return new Response(JSON.stringify(processedBlogs), { status: 200 });
+    return new Response(JSON.stringify(processedBlogs), {status: 200});
   } catch (error) {
-    return new Response(JSON.stringify({ error: 'Failed to fetch blogs' }), { status: 500 });
+    return new Response(JSON.stringify({error: 'Failed to fetch blogs'}), {status: 500});
   }
 }
 
@@ -47,32 +48,36 @@ export async function POST(req: Request): Promise<Response> {
     const summary = formData.get('summary') as string;
     const content = formData.get('content') as string;
     const createdDate = new Date().toISOString();
-    const slug = slugify(title, { lower: true, strict: true });
+    const slug = slugify(title, {lower: true, strict: true});
     const authorImageUrl = formData.get('authorImageUrl') || 'https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd';  // Default image URL if missing
 
     // Handle `thumbnailUrl` as BLOB
-    let thumbnailBlob: Buffer | null = null;
+    let thumbnailBase64: string | null = null;
     const thumbnailFile = formData.get('thumbnailFile') as File | null;
     if (thumbnailFile) {
       const arrayBuffer = await thumbnailFile.arrayBuffer();
-      thumbnailBlob = Buffer.from(arrayBuffer); // Convert file to binary (BLOB)
+      const thumbnailBlob = Buffer.from(arrayBuffer); // Convert file to binary (BLOB)
+      thumbnailBase64 = `data:image/jpeg;base64,${thumbnailBlob.toString('base64')}`; // Add base64 prefix
     }
 
-    // Insert the blog post data using a parameterized query
-    await turso.execute(
-      `INSERT INTO blogs (slug, author, authorImageUrl, title, summary, createdDate, thumbnailUrl, content)
-       VALUES (${slug}, ${author},${authorImageUrl},${title}, ${summary}, ${createdDate}, ${thumbnailBlob}, ${content})`,
-    );
+    const query = `
+      INSERT INTO blogs (slug, author, authorImageUrl, title, summary, createdDate, thumbnailUrl, content)
+      VALUES ('${slug}', '${author}', '${authorImageUrl}', '${title}', '${summary}', '${createdDate}', '${thumbnailBase64}', '${content}')
+    `;
 
-    return new Response(JSON.stringify({ message: 'Blog created successfully' }), {
+    // Execute the query
+    await turso.execute(query);
+
+    return new Response(JSON.stringify({message: 'Blog created successfully'}), {
       status: 201,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
     });
   } catch (error) {
     console.error('Error creating blog post:', error);
-    return new Response(JSON.stringify({ error: 'Failed to create blog post' }), {
+    return new Response(JSON.stringify({error: 'Failed to create blog post'}), {
       status: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json'},
     });
   }
 }
+
