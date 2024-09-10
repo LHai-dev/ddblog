@@ -14,6 +14,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return {
       title: 'Post Not Found',
       description: 'This post does not exist.',
+      robots: {
+        index: false, // Do not index 404 pages
+        follow: false,
+      },
     };
   }
 
@@ -23,12 +27,21 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return {
       title: 'Post Not Found',
       description: 'This post does not exist.',
+      robots: {
+        index: false, // Do not index 404 pages
+        follow: false,
+      },
     };
   }
 
+  const keywords = post.tags && post.tags.length > 0
+    ? post.tags.join(', ')
+    : siteMetadata.keywords || "default, blog, tags";
   return {
     title: `${post.title} | ${siteMetadata.title}`,
     description: post.summary || siteMetadata.description,
+    keywords: keywords, // Add keywords for SEO
+    author: post.author || siteMetadata.author,
     openGraph: {
       title: post.title,
       description: post.summary || siteMetadata.description,
@@ -36,7 +49,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       siteName: siteMetadata.title,
       images: [
         {
-          url: post.thumbnailUrl || siteMetadata.socialBanner, // Blog cover image or fallback
+          url: post.thumbnailUrl || siteMetadata.socialBanner,
           width: 1200,
           height: 630,
           alt: `${post.title} cover image`,
@@ -58,32 +71,24 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       index: true,
       follow: true,
     },
-    themeColor: "#ffffff", // Set the theme color
+    themeColor: "#ffffff",
     alternates: {
       canonical: `${siteMetadata.siteUrl}/blog/${params.slug}`,
     },
     link: [
       {
         rel: 'icon',
-        href: '/logo.png', // Change to your favicon URL
+        href: siteMetadata.siteLogo, // Ensure favicon URL is accurate
         type: 'image/png',
         sizes: '32x32',
       },
       {
         rel: 'canonical',
-        href: `${siteMetadata.siteUrl}/blog/${params.slug}`, // Canonical URL
-      },
-      {
-        rel: 'preload',
-        href: '/GeistMonoVF.woff', // Example font preloading
-        as: 'font',
-        type: 'font/woff2',
-        crossOrigin: 'anonymous',
+        href: `${siteMetadata.siteUrl}/blog/${params.slug}`,
       },
     ],
   };
 }
-
 export default async function BlogSlug({ params }: { params: { slug: string } }) {
   try {
     const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);

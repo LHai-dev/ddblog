@@ -8,4 +8,5 @@ export interface Post {
   thumbnailUrl: string;
   content: string;
   title: string;
+  tags?: string[]; // Add this if it's missing
 }
