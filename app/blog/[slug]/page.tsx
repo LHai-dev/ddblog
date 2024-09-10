@@ -7,7 +7,6 @@ import siteMetadata from "@/app/lib/siteMetaData";
 import { calculateReadingTime } from "@/app/lib/readingTimeUtil";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
-  // Fetch the blog post from your API using the slug to generate metadata
   const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
 
   if (!res.ok) {
@@ -37,7 +36,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       siteName: siteMetadata.title,
       images: [
         {
-          url: post.thumbnailUrl || siteMetadata.socialBanner, // Use the blog cover image or fallback to default
+          url: post.thumbnailUrl || siteMetadata.socialBanner, // Blog cover image or fallback
           width: 1200,
           height: 630,
           alt: `${post.title} cover image`,
@@ -55,15 +54,38 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: post.summary || siteMetadata.description,
       images: [post.thumbnailUrl || siteMetadata.socialBanner],
     },
+    robots: {
+      index: true,
+      follow: true,
+    },
+    themeColor: "#ffffff", // Set the theme color
     alternates: {
       canonical: `${siteMetadata.siteUrl}/blog/${params.slug}`,
     },
+    link: [
+      {
+        rel: 'icon',
+        href: '/logo.png', // Change to your favicon URL
+        type: 'image/png',
+        sizes: '32x32',
+      },
+      {
+        rel: 'canonical',
+        href: `${siteMetadata.siteUrl}/blog/${params.slug}`, // Canonical URL
+      },
+      {
+        rel: 'preload',
+        href: '/GeistMonoVF.woff', // Example font preloading
+        as: 'font',
+        type: 'font/woff2',
+        crossOrigin: 'anonymous',
+      },
+    ],
   };
 }
 
 export default async function BlogSlug({ params }: { params: { slug: string } }) {
   try {
-    // Fetch the blog post from your API using the slug
     const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
 
     if (!res.ok) {
