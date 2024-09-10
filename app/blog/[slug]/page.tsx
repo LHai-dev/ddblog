@@ -1,14 +1,12 @@
 import { notFound } from 'next/navigation';
 import { Post } from '@/app/type/Post';
-import BlogDetail from '@/app/components/BlogDetail'; // Client component
+import BlogDetail from '@/app/components/BlogDetail';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import SEO from '@/app/components/Head'; // Use your SEO component
-import siteMetadata from "@/app/lib/siteMetaData"; // Consistent import
+import SEO from '@/app/components/Head';
+import siteMetadata from "@/app/lib/siteMetaData";
 import Script from 'next/script';
 import {calculateReadingTime} from "@/app/lib/readingTimeUtil";
-
-export const runtime = "edge"; // Running on edge runtime
 
 export default async function BlogSlug({ params }: { params: { slug: string } }) {
   // Fetch the blog post from your API using the slug
@@ -16,26 +14,25 @@ export default async function BlogSlug({ params }: { params: { slug: string } })
 
   if (!res.ok) {
     console.error('Failed to fetch post:', res.status, res.statusText);
-    notFound(); // Display 404 page if the post isn't found
+    notFound();
     return;
   }
 
   const post: Post | null = await res.json();
   if (!post) {
-    notFound(); // Display 404 page if the post is null
+    notFound();
     return;
   }
 
-  // Serialize the MDX content using next-mdx-remote
   const mdxSource: MDXRemoteSerializeResult = await serialize(post.content);
-
-  // Set default fallback values for metadata if some are missing
   const postTitle = post.title || 'Untitled Post';
   const postSummary = post.summary || 'Read this exciting blog post';
   const postImage = post.thumbnailUrl || `${siteMetadata.siteUrl}${siteMetadata.socialBanner}`;
+  const postAuthor = post.author || 'Unknown Author';
+  const postAuthorImage = post.authorImageUrl || `${siteMetadata.siteUrl}/default-author.jpg`; // You should add author image handling in your data
+  const postUrl = `${siteMetadata.siteUrl}/blog/${post.slug}`;
   const readTime = calculateReadingTime(post.content);
 
-  // JSON-LD structured data for SEO
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -43,32 +40,31 @@ export default async function BlogSlug({ params }: { params: { slug: string } })
     "image": postImage,
     "author": {
       "@type": "Person",
-      "name": post.author || "Unknown Author"
+      "name": postAuthor,
+      "image": postAuthorImage // Add author image for SEO structured data
     },
     "datePublished": post.createdDate || "2024-01-01",
     "dateModified": post.createdDate || "2024-01-01",
     "description": postSummary,
-    "url": `${siteMetadata.siteUrl}/blog/${post.slug}`
+    "url": postUrl,
   };
 
   return (
     <>
-      {/* Use your dynamic SEO component */}
       <SEO
         title={`${postTitle} | ${siteMetadata.title}`}
         description={postSummary}
         imageUrl={postImage}
+        url={postUrl}
       />
 
-      {/* Inject JSON-LD structured data for the blog post */}
       <Script
         id="blog-post-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Pass data to BlogDetail client component */}
-      <BlogDetail post={post} mdxSource={mdxSource}   readTime={readTime}/>
+      <BlogDetail post={post} mdxSource={mdxSource} readTime={readTime} />
     </>
   );
 }

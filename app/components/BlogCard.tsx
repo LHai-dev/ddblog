@@ -11,7 +11,7 @@ interface BlogCardProps {
 
 export default function BlogCard({ post, readTime }: BlogCardProps) {
   return (
-    <div className="group block mb-12 border-b border-gray-200 pb-8 hover:bg-gray-50 transition duration-300 ease-in-out cursor-pointer">
+    <div className=" block mb-12 border-b border-gray-200 pb-8 hover:bg-gray-50 cursor-pointer">
       <Link href={`/blog/${post.slug}`}>
         <div className="flex flex-col md:flex-row items-start md:space-x-6">
           {/* Thumbnail Image */}

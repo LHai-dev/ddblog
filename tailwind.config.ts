@@ -43,8 +43,7 @@ const config: Config = {
     },
   },
   plugins: [
-    require('@tailwindcss/typography'),
-    require('@tailwindcss/line-clamp')// Enabling the typography plugin for rich content styling
+    require('@tailwindcss/typography')
   ],
 };
 

@@ -1,9 +1,10 @@
-'use client'; // Enable client-side rendering for this component
+'use client';
 
 import { MDXRemote } from 'next-mdx-remote';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { Post } from '@/app/type/Post';
 import {calculateReadingTime} from "@/app/lib/readingTimeUtil";
+import Image from "next/image";
 
 interface BlogDetailProps {
   post: Post;
@@ -23,13 +24,14 @@ export default function BlogDetail({ post, mdxSource }: BlogDetailProps) {
 
         {/* Author and Meta Information */}
         <div className="flex items-center space-x-4 mb-6">
-          <img
+          <Image
             src={post.authorImageUrl || '/default-avatar.png'}
             alt={post.author}
             width={50}
             height={50}
             className="rounded-full"
           />
+
           <div>
             <p className="text-lg font-semibold">{post.author}</p>
             <p className="text-sm text-gray-500">
@@ -42,7 +44,14 @@ export default function BlogDetail({ post, mdxSource }: BlogDetailProps) {
           </div>
         </div>
 
-        {/* Blog Content */}
+        <Image
+                width={1200}
+                height={600}
+          src={post.thumbnailUrl || '/default-avatar.png'}
+          alt={post.author}
+          className="rounded-lg object-cover mb-3"
+        />
+
         <div className="prose prose-lg max-w-none text-gray-800">
           {mdxSource ? (
             <MDXRemote {...mdxSource} />
