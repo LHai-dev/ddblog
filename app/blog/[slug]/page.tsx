@@ -5,6 +5,7 @@ import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import siteMetadata from "@/app/lib/siteMetaData";
 import { calculateReadingTime } from "@/app/lib/readingTimeUtil";
 import { notFound } from 'next/navigation';
+import siteMetaData from "@/app/lib/siteMetaData";
 
 // Generate static paths for each blog post
 export async function generateStaticParams() {
@@ -37,47 +38,46 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
   }
 
-  const keywords = post.tags && post.tags.length > 0
-    ? post.tags.join(', ')
-    : siteMetadata.keywords || "default, blog, tags";
-
   return {
+    metadataBase: new URL(siteMetaData.siteUrl),
     title: `${post.title} - ${post.author}`,
-    description: post.summary || siteMetadata.description,
-    keywords: keywords,
-    author: post.author || siteMetadata.author,
+    description: post.summary, // Default description
     openGraph: {
       title: post.title,
-      description: post.summary || siteMetadata.description,
+      description: post.summary,
       url: `${siteMetadata.siteUrl}/blog/${params.slug}`,
-      siteName: siteMetadata.title,
+      siteName: siteMetaData.title,
       images: [
         {
-          url: post.thumbnailUrl || siteMetadata.socialBanner,
-          width: 1200,
+          url: post.thumbnailUrl,
+          width: 1200, // Specify image dimensions
           height: 630,
-          alt: `${post.title} cover image`,
+          alt: "Banner image for social sharing", // Provide an alt for accessibility
         },
       ],
-      type: 'article',
-      article: {
-        publishedTime: post.createdDate,
-        authors: [post.author],
-      },
+      locale: "en_US",
+      type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: post.title,
-      description: post.summary || siteMetadata.description,
-      images: [post.thumbnailUrl || siteMetadata.socialBanner],
+      title: siteMetaData.title,
+      description: siteMetaData.description,
+      images: [siteMetaData.socialBanner],
     },
     robots: {
-      index: true,
-      follow: true,
+      index: true, // Ensure search engines index the page
+      follow: true, // Allow following links
+      googleBot: {
+        index: true,
+        follow: true,
+        noimageindex: true, // Prevent image indexing
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-    themeColor: "#ffffff",
     alternates: {
-      canonical: `${siteMetadata.siteUrl}/blog/${params.slug}`,
+      canonical: siteMetaData.siteUrl, // Canonical URL for SEO
     },
   };
 }
