@@ -1,6 +1,5 @@
 import Head from 'next/head';
 
-// Define the interface for the props
 interface SEOProps {
     title: string;
     description: string;

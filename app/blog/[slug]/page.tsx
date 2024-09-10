@@ -3,68 +3,89 @@ import { Post } from '@/app/type/Post';
 import BlogDetail from '@/app/components/BlogDetail';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import SEO from '@/app/components/Head';
 import siteMetadata from "@/app/lib/siteMetaData";
-import Script from 'next/script';
-import {calculateReadingTime} from "@/app/lib/readingTimeUtil";
+import { calculateReadingTime } from "@/app/lib/readingTimeUtil";
 
-export default async function BlogSlug({ params }: { params: { slug: string } }) {
-  // Fetch the blog post from your API using the slug
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  // Fetch the blog post from your API using the slug to generate metadata
   const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
 
   if (!res.ok) {
     console.error('Failed to fetch post:', res.status, res.statusText);
-    notFound();
-    return;
+    return {
+      title: 'Post Not Found',
+      description: 'This post does not exist.',
+    };
   }
 
   const post: Post | null = await res.json();
+
   if (!post) {
-    notFound();
-    return;
+    return {
+      title: 'Post Not Found',
+      description: 'This post does not exist.',
+    };
   }
 
-  const mdxSource: MDXRemoteSerializeResult = await serialize(post.content);
-  const postTitle = post.title || 'Untitled Post';
-  const postSummary = post.summary || 'Read this exciting blog post';
-  const postImage = post.thumbnailUrl || `${siteMetadata.siteUrl}${siteMetadata.socialBanner}`;
-  const postAuthor = post.author || 'Unknown Author';
-  const postAuthorImage = post.authorImageUrl || `${siteMetadata.siteUrl}/default-author.jpg`; // You should add author image handling in your data
-  const postUrl = `${siteMetadata.siteUrl}/blog/${post.slug}`;
-  const readTime = calculateReadingTime(post.content);
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": postTitle,
-    "image": postImage,
-    "author": {
-      "@type": "Person",
-      "name": postAuthor,
-      "image": postAuthorImage // Add author image for SEO structured data
+  return {
+    title: `${post.title} | ${siteMetadata.title}`,
+    description: post.summary || siteMetadata.description,
+    openGraph: {
+      title: post.title,
+      description: post.summary || siteMetadata.description,
+      url: `${siteMetadata.siteUrl}/blogs/${params.slug}`,
+      siteName: siteMetadata.title,
+      images: [
+        {
+          url: post.thumbnailUrl || siteMetadata.socialBanner, // Use the blog cover image or fallback to default
+          width: 1200,
+          height: 630,
+          alt: `${post.title} cover image`,
+        },
+      ],
+      type: 'article',
+      article: {
+        publishedTime: post.createdDate,
+        authors: [post.author],
+      },
     },
-    "datePublished": post.createdDate || "2024-01-01",
-    "dateModified": post.createdDate || "2024-01-01",
-    "description": postSummary,
-    "url": postUrl,
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.summary || siteMetadata.description,
+      images: [post.thumbnailUrl || siteMetadata.socialBanner],
+    },
+    alternates: {
+      canonical: `${siteMetadata.siteUrl}/blogs/${params.slug}`,
+    },
   };
+}
 
-  return (
-    <>
-      <SEO
-        title={`${postTitle} | ${siteMetadata.title}`}
-        description={postSummary}
-        imageUrl={postImage}
-        url={postUrl}
-      />
+export default async function BlogSlug({ params }: { params: { slug: string } }) {
+  try {
+    // Fetch the blog post from your API using the slug
+    const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
 
-      <Script
-        id="blog-post-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+    if (!res.ok) {
+      console.error('Failed to fetch post:', res.status, res.statusText);
+      notFound();
+    }
 
-      <BlogDetail post={post} mdxSource={mdxSource} readTime={readTime} />
-    </>
-  );
+    const post: Post | null = await res.json();
+    if (!post) {
+      notFound();
+    }
+
+    const mdxSource: MDXRemoteSerializeResult = await serialize(post.content);
+    const readTime = calculateReadingTime(post.content);
+
+    return (
+      <>
+        <BlogDetail post={post} mdxSource={mdxSource} readTime={readTime} />
+      </>
+    );
+  } catch (error) {
+    console.error('An error occurred while fetching the blog post:', error);
+    notFound();
+  }
 }
