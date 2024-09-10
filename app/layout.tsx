@@ -1,9 +1,9 @@
 import "./globals.css";
-import Navbar from "@/app/components/Navbar";
+import Navbar from "@/components/Navbar";
 import React from "react";
 import { Noto_Sans_Khmer } from 'next/font/google';
-import Banner from "@/app/components/Banners";
-import siteMetaData from "@/app/lib/siteMetaData";
+import Banner from "@/components/Banners";
+import siteMetaData from "@/lib/siteMetaData";
 export const runtime = 'edge';
 // Load the custom font
 const notoSansKhmer = Noto_Sans_Khmer({

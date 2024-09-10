@@ -1,4 +1,4 @@
-import {turso} from '../../lib/turso';
+import {turso} from '@/lib/turso';
 import slugify from 'slugify';
 
 export async function GET() {

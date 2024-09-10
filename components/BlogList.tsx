@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Post } from '@/app/type/Post';
 import BlogCard from './BlogCard';
-import { calculateReadingTime } from '@/app/lib/readingTimeUtil'; // Ensure you import the helper function
+import { calculateReadingTime } from '@/lib/readingTimeUtil'; // Ensure you import the helper function
 
 export default function BlogList() {
   const [posts, setPosts] = useState<Post[]>([]); // Type the posts array

@@ -3,7 +3,7 @@
 import { MDXRemote } from 'next-mdx-remote';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { Post } from '@/app/type/Post';
-import {calculateReadingTime} from "@/app/lib/readingTimeUtil";
+import {calculateReadingTime} from "@/lib/readingTimeUtil";
 import Image from "next/image";
 
 interface BlogDetailProps {

@@ -1,5 +1,5 @@
 'use client';
-import BlogList from "@/app/components/BlogList";
+import BlogList from "@/components/BlogList";
 
 
 export default function Home() {

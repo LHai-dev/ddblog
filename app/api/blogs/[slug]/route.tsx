@@ -1,4 +1,4 @@
-import { turso } from '@/app/lib/turso';
+import { turso } from '@/lib/turso';
 
 
 export async function GET(req: Request, { params }: { params: { slug: string } }) {

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ForwardRefEditor } from '@/app/components/mdx/ForwardRefEditor';
+import { ForwardRefEditor } from '@/components/mdx/ForwardRefEditor';
 import slugify from 'slugify';
 import { useRouter } from 'next/navigation';
 

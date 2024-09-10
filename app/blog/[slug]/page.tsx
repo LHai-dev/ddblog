@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
 import { Post } from '@/app/type/Post';
-import BlogDetail from '@/app/components/BlogDetail';
+import BlogDetail from '@/components/BlogDetail';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
-import siteMetadata from "@/app/lib/siteMetaData";
-import { calculateReadingTime } from "@/app/lib/readingTimeUtil";
+import siteMetadata from "@/lib/siteMetaData";
+import { calculateReadingTime } from "@/lib/readingTimeUtil";
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
