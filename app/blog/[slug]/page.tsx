@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function BlogSlug({ params }: { params: { slug: string } }) {
   try {
     // Fetch the blog post from your API using the slug
-    const res = await fetch(`${siteMetadata.siteUrl}/api/blog/${params.slug}`);
+    const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
 
     if (!res.ok) {
       console.error('Failed to fetch post:', res.status, res.statusText);
