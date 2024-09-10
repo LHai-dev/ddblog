@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     openGraph: {
       title: post.title,
       description: post.summary || siteMetadata.description,
-      url: `${siteMetadata.siteUrl}/blogs/${params.slug}`,
+      url: `${siteMetadata.siteUrl}/blog/${params.slug}`,
       siteName: siteMetadata.title,
       images: [
         {
@@ -56,7 +56,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       images: [post.thumbnailUrl || siteMetadata.socialBanner],
     },
     alternates: {
-      canonical: `${siteMetadata.siteUrl}/blogs/${params.slug}`,
+      canonical: `${siteMetadata.siteUrl}/blog/${params.slug}`,
     },
   };
 }
@@ -64,7 +64,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 export default async function BlogSlug({ params }: { params: { slug: string } }) {
   try {
     // Fetch the blog post from your API using the slug
-    const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
+    const res = await fetch(`${siteMetadata.siteUrl}/api/blog/${params.slug}`);
 
     if (!res.ok) {
       console.error('Failed to fetch post:', res.status, res.statusText);
