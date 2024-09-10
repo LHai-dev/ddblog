@@ -1,22 +1,10 @@
+import { notFound } from 'next/navigation';
 import { Post } from '@/app/type/Post';
 import BlogDetail from '@/app/components/BlogDetail';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import siteMetadata from "@/app/lib/siteMetaData";
 import { calculateReadingTime } from "@/app/lib/readingTimeUtil";
-import { notFound } from 'next/navigation';
-import siteMetaData from "@/app/lib/siteMetaData";
-
-// Generate static paths for each blog post
-export async function generateStaticParams() {
-  const res = await fetch(`${siteMetadata.siteUrl}/api/blogs`);
-  const posts: Post[] = await res.json();
-
-  // Return paths with each blog slug
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
@@ -39,46 +27,53 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   return {
-    metadataBase: new URL(siteMetaData.siteUrl),
-    title: `${post.title} - ${post.author}`,
-    description: post.summary, // Default description
+    title: `${post.title} | ${siteMetadata.title}`,
+    description: post.summary || siteMetadata.description,
     openGraph: {
       title: post.title,
-      description: post.summary,
+      description: post.summary || siteMetadata.description,
       url: `${siteMetadata.siteUrl}/blog/${params.slug}`,
-      siteName: siteMetaData.title,
+      siteName: siteMetadata.title,
       images: [
         {
-          url: post.thumbnailUrl,
-          width: 1200, // Specify image dimensions
+          url: "https://miro.medium.com/v2/resize:fit:828/format:png/1*kTecnhswIOIkapFR1kGdpA.png" || siteMetadata.socialBanner, // Blog cover image or fallback
+          width: 1200,
           height: 630,
-          alt: "Banner image for social sharing", // Provide an alt for accessibility
+          alt: `${post.title} cover image`,
         },
       ],
-      locale: "en_US",
-      type: "website",
+      type: 'article',
+      article: {
+        publishedTime: post.createdDate,
+        authors: [post.author],
+      },
     },
     twitter: {
       card: "summary_large_image",
-      title: siteMetaData.title,
-      description: siteMetaData.description,
-      images: [siteMetaData.socialBanner],
+      title: post.title,
+      description: post.summary || siteMetadata.description,
+      images: ["https://miro.medium.com/v2/resize:fit:828/format:png/1*kTecnhswIOIkapFR1kGdpA.png"|| siteMetadata.socialBanner],
     },
     robots: {
-      index: true, // Ensure search engines index the page
-      follow: true, // Allow following links
-      googleBot: {
-        index: true,
-        follow: true,
-        noimageindex: true, // Prevent image indexing
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
+      index: true,
+      follow: true,
     },
+    themeColor: "#ffffff", // Set the theme color
     alternates: {
-      canonical: siteMetaData.siteUrl, // Canonical URL for SEO
+      canonical: `${siteMetadata.siteUrl}/blog/${params.slug}`,
     },
+    link: [
+      {
+        rel: 'icon',
+        href: '/favicon.ico', // Change to your favicon URL
+        type: 'image/png',
+        sizes: '32x32',
+      },
+      {
+        rel: 'canonical',
+        href: `${siteMetadata.siteUrl}/blog/${params.slug}`, // Canonical URL
+      },
+    ],
   };
 }
 
