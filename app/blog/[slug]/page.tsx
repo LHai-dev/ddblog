@@ -1,10 +1,21 @@
-import { notFound } from 'next/navigation';
 import { Post } from '@/app/type/Post';
 import BlogDetail from '@/app/components/BlogDetail';
 import { serialize } from 'next-mdx-remote/serialize';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import siteMetadata from "@/app/lib/siteMetaData";
 import { calculateReadingTime } from "@/app/lib/readingTimeUtil";
+import { notFound } from 'next/navigation';
+
+// Generate static paths for each blog post
+export async function generateStaticParams() {
+  const res = await fetch(`${siteMetadata.siteUrl}/api/blogs`);
+  const posts: Post[] = await res.json();
+
+  // Return paths with each blog slug
+  return posts.map((post) => ({
+    slug: post.slug,
+  }));
+}
 
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
@@ -14,10 +25,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return {
       title: 'Post Not Found',
       description: 'This post does not exist.',
-      robots: {
-        index: false, // Do not index 404 pages
-        follow: false,
-      },
     };
   }
 
@@ -27,20 +34,17 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     return {
       title: 'Post Not Found',
       description: 'This post does not exist.',
-      robots: {
-        index: false, // Do not index 404 pages
-        follow: false,
-      },
     };
   }
 
   const keywords = post.tags && post.tags.length > 0
     ? post.tags.join(', ')
     : siteMetadata.keywords || "default, blog, tags";
+
   return {
-    title: `${post.title} | ${siteMetadata.title}`,
+    title: `${post.title} - ${post.author}`,
     description: post.summary || siteMetadata.description,
-    keywords: keywords, // Add keywords for SEO
+    keywords: keywords,
     author: post.author || siteMetadata.author,
     openGraph: {
       title: post.title,
@@ -75,20 +79,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     alternates: {
       canonical: `${siteMetadata.siteUrl}/blog/${params.slug}`,
     },
-    link: [
-      {
-        rel: 'icon',
-        href: siteMetadata.siteLogo, // Ensure favicon URL is accurate
-        type: 'image/png',
-        sizes: '32x32',
-      },
-      {
-        rel: 'canonical',
-        href: `${siteMetadata.siteUrl}/blog/${params.slug}`,
-      },
-    ],
   };
 }
+
 export default async function BlogSlug({ params }: { params: { slug: string } }) {
   try {
     const res = await fetch(`${siteMetadata.siteUrl}/api/blogs/${params.slug}`);
