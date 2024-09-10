@@ -5,7 +5,7 @@ import React from "react";
 import { Noto_Sans_Khmer } from 'next/font/google';
 import Banner from "@/app/components/Banners";
 import siteMetadata from "@/app/lib/siteMetaData"; // Consistent import
-
+export const runtime = 'edge';
 // Load the custom font
 const notoSansKhmer = Noto_Sans_Khmer({
   subsets: ['latin'],
