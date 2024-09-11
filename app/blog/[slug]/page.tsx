@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       siteName: siteMetadata.title,
       images: [
         {
-          url: "https://miro.medium.com/v2/resize:fit:828/format:png/1*kTecnhswIOIkapFR1kGdpA.png" || siteMetadata.socialBanner, // Blog cover image or fallback
+          url: post.thumbnailUrl || siteMetadata.socialBanner, // Blog cover image or fallback
           width: 1200,
           height: 630,
           alt: `${post.title} cover image`,
@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       card: "summary_large_image",
       title: post.title,
       description: post.summary || siteMetadata.description,
-      images: ["https://miro.medium.com/v2/resize:fit:828/format:png/1*kTecnhswIOIkapFR1kGdpA.png"|| siteMetadata.socialBanner],
+      images: [post.thumbnailUrl|| siteMetadata.socialBanner],
     },
     robots: {
       index: true,
