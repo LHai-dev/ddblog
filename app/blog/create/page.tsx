@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 
 // Function to generate a 9-digit random number
 function generateUniqueId() {
-  return Math.floor(Math.random() * 1_000_000_000).toString();
+  return Math.floor(Math.random() * 1_000_000_000).toString(); // Generates a string representation of a 9-digit number
 }
 
 export default function CreateMediumStylePost() {
@@ -17,20 +17,19 @@ export default function CreateMediumStylePost() {
   const [authorImageUrl, setAuthorImageUrl] = useState('https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
   const [content, setContent] = useState('## Hello world\nThis is an example post.');
-  const [isSavingDraft] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
-  const [authorImageFile] = useState<File | null>(null);
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [useThumbnailUrl, setUseThumbnailUrl] = useState(true); // Toggle for thumbnail
-  const [useImageUrl] = useState(true); // Toggle for author image
+  const [authorImageFile, setAuthorImageFile] = useState<File | null>(null);
+  const [useImageUrl, setUseImageUrl] = useState(true); // Toggle for author image
   const router = useRouter();
 
   // Handle form submission and upload images in the same request
   const handleFormSubmit = async (status: string) => {
     setIsPublishing(true);
     const slugBase = slugify(title, { lower: true, strict: true });
-    const uniqueId = generateUniqueId();
-    const slug = `${slugBase}-${uniqueId}`;
+    const uniqueId = generateUniqueId(); // Generate a unique numeric ID
+    const slug = `${slugBase}-${uniqueId}`; // Concatenate slug with the unique numeric ID
     const createdDate = new Date().toISOString();
 
     // Create FormData for combining both image files and other form data
@@ -44,18 +43,21 @@ export default function CreateMediumStylePost() {
     formData.append('status', status);
 
     // Check if user is entering URL or uploading a file for author image
-    if (useImageUrl) {
+    if (useImageUrl && authorImageUrl) {
       formData.append('authorImageUrl', authorImageUrl);
     } else if (authorImageFile) {
       formData.append('authorImageFile', authorImageFile);
     }
 
     // Check if user is entering URL or uploading a file for thumbnail
-    if (useThumbnailUrl) {
-      formData.append('thumbnailUrl', thumbnailUrl);
+    if (useThumbnailUrl && thumbnailUrl) {
+      formData.append('thumbnailUrl', thumbnailUrl); // Only append if not empty
     } else if (thumbnailFile) {
       formData.append('thumbnailFile', thumbnailFile);
     }
+
+    // Debugging to verify form data content
+    console.log('FormData entries:', Array.from(formData.entries()));
 
     try {
       const response = await fetch('/api/blogs', {
@@ -68,7 +70,7 @@ export default function CreateMediumStylePost() {
         console.log('Post submitted successfully:', data);
         router.push(`/blog/${slug}`);
       } else {
-        console.error('Failed to submit post');
+        console.error('Failed to submit post:', await response.text());
       }
     } catch (error) {
       console.error('Error submitting post:', error);
@@ -104,14 +106,41 @@ export default function CreateMediumStylePost() {
         className="editor-author w-full text-lg outline-none border-b-2 focus:border-black mb-6"
       />
 
-      <input
-        hidden
-        type="text"
-        value={authorImageUrl}
-        onChange={(e) => setAuthorImageUrl(e.target.value)}
-        placeholder="Author Image URL"
-        className="editor-author-image w-full text-lg outline-none border-b-2 focus:border-black mb-6"
-      />
+      <div className="mb-4">
+        <label className="mr-4">
+          <input
+            type="radio"
+            checked={useImageUrl}
+            onChange={() => setUseImageUrl(true)}
+          />
+          Use Author Image URL
+        </label>
+        <label>
+          <input
+            type="radio"
+            checked={!useImageUrl}
+            onChange={() => setUseImageUrl(false)}
+          />
+          Upload Author Image
+        </label>
+      </div>
+
+      {useImageUrl ? (
+        <input
+          type="text"
+          value={authorImageUrl}
+          onChange={(e) => setAuthorImageUrl(e.target.value)}
+          placeholder="Author Image URL"
+          className="editor-author-image w-full text-lg outline-none border-b-2 focus:border-black mb-6"
+        />
+      ) : (
+        <input
+          type="file"
+          onChange={(e) => setAuthorImageFile(e.target.files ? e.target.files[0] : null)}
+          className="mb-6"
+          accept="image/*"
+        />
+      )}
 
       {/* Toggle between URL input and file upload for thumbnail image */}
       <div className="mb-4">
@@ -146,6 +175,7 @@ export default function CreateMediumStylePost() {
           type="file"
           onChange={(e) => setThumbnailFile(e.target.files ? e.target.files[0] : null)}
           className="mb-6"
+          accept="image/*"
         />
       )}
 
@@ -162,10 +192,10 @@ export default function CreateMediumStylePost() {
       <div className="editor-footer flex justify-between items-center">
         <button
           onClick={() => handleFormSubmit('draft')}
-          disabled={isSavingDraft}
+          disabled={isPublishing}
           className="btn-secondary"
         >
-          {isSavingDraft ? 'Saving Draft...' : 'Save Draft'}
+          {isPublishing ? 'Saving Draft...' : 'Save Draft'}
         </button>
 
         <button

@@ -39,7 +39,6 @@ export async function GET() {
   }
 }
 
-
 export async function POST(req: Request): Promise<Response> {
   try {
     const formData = await req.formData();
@@ -52,13 +51,15 @@ export async function POST(req: Request): Promise<Response> {
     const slug = slugify(title, { lower: true, strict: true });
     const authorImageUrl = formData.get('authorImageUrl') || 'https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd';  // Default image URL if missing
 
-    // Handle `thumbnailUrl` as BLOB
-    let thumbnailBase64: string | null = null;
-    const thumbnailFile = formData.get('thumbnailFile') as File | null;
-    if (thumbnailFile) {
-      const arrayBuffer = await thumbnailFile.arrayBuffer();
-      const thumbnailBlob = Buffer.from(arrayBuffer); // Convert file to binary (BLOB)
-      thumbnailBase64 = `data:image/jpeg;base64,${thumbnailBlob.toString('base64')}`; // Add base64 prefix
+    // Handle `thumbnailUrl` either as a URL or as a file upload
+    let thumbnailUrl = formData.get('thumbnailUrl') as string | null; // Check if it's a URL first
+    if (!thumbnailUrl) {
+      const thumbnailFile = formData.get('thumbnailFile') as File | null; // Check if it's a file
+      if (thumbnailFile) {
+        const arrayBuffer = await thumbnailFile.arrayBuffer();
+        const thumbnailBlob = Buffer.from(arrayBuffer); // Convert file to binary (BLOB)
+        thumbnailUrl = `data:image/jpeg;base64,${thumbnailBlob.toString('base64')}`; // Add base64 prefix
+      }
     }
 
     // Sanitize input values before concatenating them into the query
@@ -67,11 +68,12 @@ export async function POST(req: Request): Promise<Response> {
     const sanitizedTitle = title.replace(/'/g, "''");
     const sanitizedSummary = summary.replace(/'/g, "''");
     const sanitizedContent = content.replace(/'/g, "''");
+    const sanitizedThumbnailUrl = thumbnailUrl ? thumbnailUrl.replace(/'/g, "''") : null;
 
     // Build the query string manually
     const query = `
       INSERT INTO blogs (slug, author, authorImageUrl, title, summary, createdDate, thumbnailUrl, content)
-      VALUES ('${sanitizedSlug}', '${sanitizedAuthor}', '${authorImageUrl}', '${sanitizedTitle}', '${sanitizedSummary}', '${createdDate}', '${thumbnailBase64}', '${sanitizedContent}')
+      VALUES ('${sanitizedSlug}', '${sanitizedAuthor}', '${authorImageUrl}', '${sanitizedTitle}', '${sanitizedSummary}', '${createdDate}', ${sanitizedThumbnailUrl ? `'${sanitizedThumbnailUrl}'` : 'NULL'}, '${sanitizedContent}')
     `;
 
     // Execute the query

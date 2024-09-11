@@ -18,22 +18,11 @@ const nextConfig = {
 
     // Remote image handling: allows loading images from specified domains
     images: {
-        // New approach for defining remote image patterns
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'ddkhdev.lol', // Your custom domain
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'miro.medium.com', // Example domain for images
-                pathname: '/**',
-            },
-            {
-                protocol: 'https',
-                hostname: 'res.cloudinary.com', // Cloudinary image hosting
-                pathname: '/**',
+                hostname: '**', // Allows any subdomain and domain over HTTPS
+                pathname: '/**', // Allows any path
             },
         ],
     },
