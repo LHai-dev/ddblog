@@ -3,9 +3,10 @@
 import React, {useState} from 'react';
 import {ForwardRefEditor} from '@/components/mdx/ForwardRefEditor';
 import {useRouter} from 'next/navigation';
-import slugify from 'slugify'; // Assuming you have a slugify library or use your own logic
-
-export default function CreateMediumStylePost() {
+import slugify from 'slugify';
+import {auth} from "@/lib/auth"; // Assuming you have a slugify library or use your own logic
+import {redirect} from "next/navigation"
+export default async function CreateMediumStylePost() {
   const [title, setTitle] = useState('');
   const [summary, setSummary] = useState('');
   const [author, setAuthor] = useState('LimHai');
@@ -73,6 +74,8 @@ export default function CreateMediumStylePost() {
     }
   };
 
+  const session = await auth();
+  if (!session) redirect("/api/auth/signin")
   return (
     <div className="editor-container mx-auto max-w-4xl mt-10 px-4">
       <input
