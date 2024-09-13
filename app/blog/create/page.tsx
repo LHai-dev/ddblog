@@ -1,14 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import { ForwardRefEditor } from '@/components/mdx/ForwardRefEditor';
-import slugify from 'slugify';
-import { useRouter } from 'next/navigation';
-
-// Function to generate a 9-digit random number
-function generateUniqueId() {
-  return Math.floor(Math.random() * 1_000_000_000).toString(); // Generates a string representation of a 9-digit number
-}
+import React, {useState} from 'react';
+import {ForwardRefEditor} from '@/components/mdx/ForwardRefEditor';
+import {useRouter} from 'next/navigation';
+import slugify from 'slugify'; // Assuming you have a slugify library or use your own logic
 
 export default function CreateMediumStylePost() {
   const [title, setTitle] = useState('');
@@ -18,23 +13,27 @@ export default function CreateMediumStylePost() {
   const [thumbnailUrl, setThumbnailUrl] = useState('');
   const [content, setContent] = useState('## Hello world\nThis is an example post.');
   const [isPublishing, setIsPublishing] = useState(false);
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [useThumbnailUrl, setUseThumbnailUrl] = useState(true); // Toggle for thumbnail
-  const [authorImageFile, setAuthorImageFile] = useState<File | null>(null);
-  const [useImageUrl, setUseImageUrl] = useState(true); // Toggle for author image
+  const [thumbnailFile] = useState<File | null>(null);
+  const [useThumbnailUrl] = useState(true);
+  const [authorImageFile] = useState<File | null>(null);
+  const [useImageUrl] = useState(true);
   const router = useRouter();
 
-  // Handle form submission and upload images in the same request
+  const generateUniqueId = () => {
+    return Math.floor(Math.random() * 1_000_000_000).toString();
+  };
+
   const handleFormSubmit = async (status: string) => {
     setIsPublishing(true);
-    const slugBase = slugify(title, { lower: true, strict: true });
-    const uniqueId = generateUniqueId(); // Generate a unique numeric ID
-    const slug = `${slugBase}-${uniqueId}`; // Concatenate slug with the unique numeric ID
     const createdDate = new Date().toISOString();
 
-    // Create FormData for combining both image files and other form data
+    // Generate the slug from the title
+    const slugBase = slugify(title, {lower: true, strict: true});
+    const uniqueId = generateUniqueId();
+    const slug = `${slugBase}-${uniqueId}`;
+
     const formData = new FormData();
-    formData.append('slug', slug);
+    formData.append('slug', slug); // Use the generated slug here
     formData.append('title', title);
     formData.append('summary', summary);
     formData.append('author', author);
@@ -42,22 +41,17 @@ export default function CreateMediumStylePost() {
     formData.append('createdDate', createdDate);
     formData.append('status', status);
 
-    // Check if user is entering URL or uploading a file for author image
     if (useImageUrl && authorImageUrl) {
       formData.append('authorImageUrl', authorImageUrl);
     } else if (authorImageFile) {
       formData.append('authorImageFile', authorImageFile);
     }
 
-    // Check if user is entering URL or uploading a file for thumbnail
     if (useThumbnailUrl && thumbnailUrl) {
-      formData.append('thumbnailUrl', thumbnailUrl); // Only append if not empty
+      formData.append('thumbnailUrl', thumbnailUrl);
     } else if (thumbnailFile) {
       formData.append('thumbnailFile', thumbnailFile);
     }
-
-    // Debugging to verify form data content
-    console.log('FormData entries:', Array.from(formData.entries()));
 
     try {
       const response = await fetch('/api/blogs', {
@@ -106,78 +100,23 @@ export default function CreateMediumStylePost() {
         className="editor-author w-full text-lg outline-none border-b-2 focus:border-black mb-6"
       />
 
-      <div className="mb-4">
-        <label className="mr-4">
-          <input
-            type="radio"
-            checked={useImageUrl}
-            onChange={() => setUseImageUrl(true)}
-          />
-          Use Author Image URL
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={!useImageUrl}
-            onChange={() => setUseImageUrl(false)}
-          />
-          Upload Author Image
-        </label>
-      </div>
 
-      {useImageUrl ? (
-        <input
-          type="text"
-          value={authorImageUrl}
-          onChange={(e) => setAuthorImageUrl(e.target.value)}
-          placeholder="Author Image URL"
-          className="editor-author-image w-full text-lg outline-none border-b-2 focus:border-black mb-6"
-        />
-      ) : (
-        <input
-          type="file"
-          onChange={(e) => setAuthorImageFile(e.target.files ? e.target.files[0] : null)}
-          className="mb-6"
-          accept="image/*"
-        />
-      )}
+      <input
+        type="text"
+        value={authorImageUrl}
+        onChange={(e) => setAuthorImageUrl(e.target.value)}
+        placeholder="Author Image URL"
+        className="editor-author-image w-full text-lg outline-none border-b-2 focus:border-black mb-6"
+      />
 
-      {/* Toggle between URL input and file upload for thumbnail image */}
-      <div className="mb-4">
-        <label className="mr-4">
-          <input
-            type="radio"
-            checked={useThumbnailUrl}
-            onChange={() => setUseThumbnailUrl(true)}
-          />
-          Use Thumbnail URL
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={!useThumbnailUrl}
-            onChange={() => setUseThumbnailUrl(false)}
-          />
-          Upload Thumbnail Image
-        </label>
-      </div>
 
-      {useThumbnailUrl ? (
-        <input
-          type="text"
-          value={thumbnailUrl}
-          onChange={(e) => setThumbnailUrl(e.target.value)}
-          placeholder="Thumbnail Image URL"
-          className="editor-thumbnail w-full text-lg outline-none border-b-2 focus:border-black mb-6"
-        />
-      ) : (
-        <input
-          type="file"
-          onChange={(e) => setThumbnailFile(e.target.files ? e.target.files[0] : null)}
-          className="mb-6"
-          accept="image/*"
-        />
-      )}
+      <input
+        type="text"
+        value={thumbnailUrl}
+        onChange={(e) => setThumbnailUrl(e.target.value)}
+        placeholder="Thumbnail Image URL"
+        className="editor-thumbnail w-full text-lg outline-none border-b-2 focus:border-black mb-6"
+      />
 
       <div className="editor-content mb-8">
         <ForwardRefEditor
@@ -190,19 +129,11 @@ export default function CreateMediumStylePost() {
       </div>
 
       <div className="editor-footer flex justify-between items-center">
-        <button
-          onClick={() => handleFormSubmit('draft')}
-          disabled={isPublishing}
-          className="btn-secondary"
-        >
+        <button onClick={() => handleFormSubmit('draft')} disabled={isPublishing} className="btn-secondary">
           {isPublishing ? 'Saving Draft...' : 'Save Draft'}
         </button>
 
-        <button
-          onClick={() => handleFormSubmit('published')}
-          disabled={isPublishing}
-          className="btn-secondary"
-        >
+        <button onClick={() => handleFormSubmit('published')} disabled={isPublishing} className="btn-secondary">
           {isPublishing ? 'Publishing...' : 'Publish'}
         </button>
       </div>
