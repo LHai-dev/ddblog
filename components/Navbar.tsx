@@ -26,7 +26,7 @@ const Navbar = () => {
             className="py-3 px-6 text-white bg-black hover:bg-gray-800 transition-colors duration-300 rounded-md shadow-lg flex items-center space-x-3 focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 focus:outline-none"
             aria-label="Sign in with GitHub"
           >
-            <img src="/icons8-github.svg" alt="GitHub Logo" className="h-6 w-6" />
+            <Image src="/icons8-github.svg" alt="GitHub Logo" className="h-6 w-6" />
             <span className="font-semibold">Get Started with GitHub</span>
           </a>
         </div>
