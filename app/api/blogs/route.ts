@@ -33,12 +33,12 @@ export async function GET() {
   }
 }
 const blogSchema = z.object({
-  author: z.string().nonempty('Author is required'),
-  title: z.string().nonempty('Title is required'),
-  summary: z.string().optional(),
-  content: z.string().optional(),
+  title: z.string().min(1, 'Title is required'),
+  summary: z.string().min(1, 'Summary is required'),
+  author: z.string().min(1, 'Author name is required'),
   authorImageUrl: z.string().url().optional(),
   thumbnailUrl: z.string().url().optional(),
+  content: z.string().min(1, 'Content is required')
 });
 
 function generateUniqueId() {
