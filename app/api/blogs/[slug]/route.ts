@@ -1,4 +1,4 @@
-import * as schema from '@/db/schema'; // Import your schema
+import * as schema from '@/db/schema';
 import { db } from '@/db/turso'; // Import the initialized database connection
 import { eq } from 'drizzle-orm'; // Ensure this import exists if supported
 // Fetch a blog post by its slug

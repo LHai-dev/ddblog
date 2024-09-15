@@ -1,9 +1,10 @@
 'use client'; // Mark this as a Client Component
 
-import { useEffect, useState } from 'react';
-import { Post } from '@/app/type/Post';
+import React, {useEffect, useState} from 'react';
+import {Post} from '@/app/type/Post';
 import BlogCard from './BlogCard';
-import { calculateReadingTime } from '@/lib/readingTimeUtil'; // Ensure you import the helper function
+import {calculateReadingTime} from '@/lib/readingTimeUtil';
+import CategoryBar from "@/components/CategoryBar"; // Ensure you import the helper function
 
 export default function BlogList() {
   const [posts, setPosts] = useState<Post[]>([]); // Type the posts array
@@ -37,20 +38,24 @@ export default function BlogList() {
   }
 
   return (
-    <div className="container mx-auto mt-10 px-4">
-      <div className="flex justify-center">
-        <div className="w-full max-w-4xl">
-          {posts.length === 0 ? (
-            <p className="text-center text-gray-500">No posts found.</p>
-          ) : (
-            posts.map((post) => {
-              // Calculate reading time for each post
-              const readTime = calculateReadingTime(post.content);
-              return <BlogCard key={post.slug} post={post} readTime={readTime} />;
-            })
-          )}
+    <>
+      <div className="container mx-auto  px-4">
+        <CategoryBar/>
+        <div className="flex justify-center">
+          <div className="w-full max-w-4xl">
+            {posts.length === 0 ? (
+              <p className="text-center text-gray-500">No posts found.</p>
+            ) : (
+              posts.map((post) => {
+                // Calculate reading time for each post
+                const readTime = calculateReadingTime(post.content);
+                return <BlogCard key={post.slug} post={post} readTime={readTime}/>;
+              })
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
+
   );
 }

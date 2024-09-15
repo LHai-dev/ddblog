@@ -2,13 +2,20 @@ import slugify from 'slugify';
 import * as schema from '@/db/schema';
 import { db } from '@/db/turso';
 import { z } from 'zod';
+import {desc} from "drizzle-orm";
 
 export async function GET() {
   try {
-    const blogs = await db.select().from(schema.blogs); // Use the schema for table reference
+    const blogs = await db.select().from(schema.blogs).orderBy(desc(schema.blogs.createdDate)); // Use the schema for table reference
 
     const processedBlogs = blogs.map(blog => ({
-      ...blog,
+      createdDate: blog.createdDate,
+      summary: blog.summary,
+      authorImageUrl: blog.authorImageUrl,
+      author: blog.author,
+      title: blog.title,
+      slug: blog.slug,
+      content: blog.content,
       thumbnailUrl: blog.thumbnailUrl,
     }));
 
