@@ -27,10 +27,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 
   return {
-    title: `${post.title} | ${post.author}`,
+    title: `${post.title}`,
     description: post.summary || siteMetadata.description,
     openGraph: {
-      title: post.title,
+      title: `${post.title} | ${post.author}`,
       description: post.summary || siteMetadata.description,
       url: `${siteMetadata.siteUrl}/blog/${params.slug}`,
       siteName: siteMetadata.title,
