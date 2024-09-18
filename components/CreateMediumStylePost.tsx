@@ -161,7 +161,6 @@ export default function CreateMediumStylePost({ session }: CreateMediumStylePost
   rules={{ required: 'Category is required' }}
   render={({ field }) => (
     <div className="mb-6">
-      <label htmlFor="category" className="block mb-2 text-lg font-medium">Select Category</label>
       <select
         {...field}
         onChange={(e) => field.onChange(Number(e.target.value))} // Cast to number

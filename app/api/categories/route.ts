@@ -11,13 +11,6 @@ const categorySchema = z.object({
   name: z.string().min(1, "Category name is required"),
 });
 
-// Define the Category interface (same as your example)
-export interface Category {
-  id: number;
-  slug: string;
-  name: string;
-}
-
 // POST route handler for creating a new category
 export async function POST(req: NextRequest) {
   try {

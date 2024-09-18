@@ -24,6 +24,8 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
     return new Response(JSON.stringify({ error: 'Failed to fetch blog post' }), { status: 500 });
   }
 }
+
+
 export async function DELETE(req: Request, { params }: { params: { slug: string } }) {
   const { slug } = params;
   try {

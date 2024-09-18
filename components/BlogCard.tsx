@@ -22,6 +22,8 @@ export default function BlogCard({ post, readTime }: BlogCardProps) {
               width={400}
               height={250}
               className="object-cover w-full h-56 rounded-lg shadow-sm transition-transform duration-300 group-hover:scale-105"
+              placeholder="blur"
+              blurDataURL="/default-thumbnail.png" // Placeholder image
             />
           </div>
 
@@ -35,6 +37,8 @@ export default function BlogCard({ post, readTime }: BlogCardProps) {
                 width={40}
                 height={40}
                 className="object-cover w-[40px] h-[40px] rounded-full shadow-md"
+                placeholder="blur"
+                blurDataURL="/default-avatar.png" // Placeholder image
               />
               <span className="ml-3 font-semibold">{post.author}</span>
             </div>
