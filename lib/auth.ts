@@ -5,7 +5,7 @@ export const { auth, handlers: { GET, POST}} = NextAuth({
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string      
     })
   ],
   secret: process.env.NEXTAUTH_SECRET,

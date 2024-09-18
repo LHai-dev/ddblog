@@ -11,3 +11,18 @@ export const blogs = sqliteTable('blogs', {
   thumbnailUrl: text('thumbnailUrl'),
   content: text('content').notNull(),
 });
+
+export const categories = sqliteTable("categories", {
+  id: integer("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull(),
+});
+
+export const blogCategory = sqliteTable('blogCategory', {
+  blog_id: integer('blog_id')
+    .references(() => blogs.id, { onDelete: 'cascade' })
+    .notNull(),
+  category_id: integer('category_id')
+    .references(() => categories.id, { onDelete: 'cascade' })
+    .notNull(),
+});

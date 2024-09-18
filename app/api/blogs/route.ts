@@ -38,73 +38,51 @@ const blogSchema = z.object({
   author: z.string().min(1, 'Author name is required'),
   authorImageUrl: z.string().url().optional(),
   thumbnailUrl: z.string().url().optional(),
-  content: z.string().min(1, 'Content is required')
+  content: z.string().min(1, 'Content is required'),
+  categoryIds: z.array(z.number()).min(1, 'At least one category is required'), // This should expect an array
 });
 
-function generateUniqueId() {
-  return Math.floor(Math.random() * 1_000_000_000).toString(); // Generates a string representation of a 9-digit number
-}
 
 export async function POST(req: Request): Promise<Response> {
   try {
-    const formData = await req.formData();
+    const json = await req.json();
 
-    // Convert FormData entries into an object
-    const formObject: Record<string, FormDataEntryValue> = {};
-    formData.forEach((value, key) => {
-      formObject[key] = value;
-    });
-
-    // Validate and parse the data using Zod
-    const parsedData = blogSchema.safeParse({
-      author: formObject.author,
-      title: formObject.title,
-      summary: formObject.summary,
-      content: formObject.content,
-      authorImageUrl: formObject.authorImageUrl,
-      thumbnailUrl: formObject.thumbnailUrl,
-    });
-
-    // Check for validation errors
+    // Validate data
+    const parsedData = blogSchema.safeParse(json);
     if (!parsedData.success) {
       const errorMessages = parsedData.error.errors.map((err) => err.message).join(', ');
       return new Response(JSON.stringify({ error: `Validation failed: ${errorMessages}` }), { status: 400 });
     }
 
-    // Extract validated data
-    const { author, title, summary, content, authorImageUrl, thumbnailUrl } = parsedData.data;
+    const { author, title, summary, content, authorImageUrl, thumbnailUrl, categoryIds } = parsedData.data;
 
-    // Generate the slug
-    const slugBase = slugify(title, { lower: true, strict: true });
-    const uniqueId = generateUniqueId(); // Generate a unique numeric ID
-    const slug = `${slugBase}-${uniqueId}`; // Concatenate slug with the unique numeric ID
-
-    // Default values for URLs if missing
-    const defaultAuthorImageUrl = 'https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd';
-    const defaultThumbnailUrl = 'https://media.istockphoto.com/id/1147544807/vector/thumbnail-image-vector-graphic.jpg?s=612x612&w=0&k=20&c=rnCKVbdxqkjlcs3xH87-9gocETqpspHFXu5dIGB4wuM=';
-
-    // Insert into the database with validated data
-    await db.insert(schema.blogs).values({
-      slug: slug,
-      author: author,
-      authorImageUrl: authorImageUrl || defaultAuthorImageUrl,
-      title: title,
-      summary: summary || '',
+    // Insert into blogs table
+    const insertedBlog = await db.insert(schema.blogs).values({
+      slug: slugify(title, { lower: true, strict: true }),
+      author,
+      authorImageUrl: authorImageUrl || 'https://default-url.com/image.png',
+      title,
+      summary,
+      content,
+      thumbnailUrl: thumbnailUrl || 'https://default-url.com/thumbnail.png',
       createdDate: new Date().toISOString(),
-      thumbnailUrl: thumbnailUrl || defaultThumbnailUrl,
-      content: content || '',
-    });
+    }).returning();
 
-    // Return success response
-    return new Response(JSON.stringify({ message: 'Blog created successfully' }), {
-      status: 201,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const blogId = insertedBlog[0].id;
+
+    // Insert into BlogCategory table for each category
+    const categoryInsertions = categoryIds.map(categoryId =>
+      db.insert(schema.blogCategory).values({
+        blog_id: blogId,
+        category_id: categoryId
+      })
+    );
+
+    await Promise.all(categoryInsertions);
+
+    return new Response(JSON.stringify({ message: 'Blog created successfully', blogId }), { status: 201 });
   } catch (error) {
     console.error('Error creating blog post:', error);
-    return new Response(JSON.stringify({ error: 'Failed to create blog post' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({ error: 'Failed to create blog post' }), { status: 500 });
   }
 }
