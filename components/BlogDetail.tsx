@@ -3,13 +3,14 @@
 import { MDXRemote } from 'next-mdx-remote';
 import { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { Post } from '@/app/type/Post';
-import {calculateReadingTime} from "@/lib/readingTimeUtil";
+
 import Image from "next/image";
+import { calculateReadingTime } from '@/lib/readingTimeUtil';
 
 interface BlogDetailProps {
   post: Post;
   mdxSource: MDXRemoteSerializeResult;
-  readTime: string;
+  readTime: number;
 }
 
 export default function BlogDetail({ post, mdxSource }: BlogDetailProps) {
@@ -39,7 +40,7 @@ export default function BlogDetail({ post, mdxSource }: BlogDetailProps) {
                 month: 'long',
                 day: 'numeric',
                 year: 'numeric',
-              })} • {readTime}
+              })} • {readTime} min read
             </p>
           </div>
         </div>

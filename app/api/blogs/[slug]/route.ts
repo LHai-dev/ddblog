@@ -6,22 +6,32 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
   const { slug } = params;
 
   try {
-    // Fetch the blog post using the condition directly
     const blogs = await db
       .select()
       .from(schema.blogs)
-      .where(eq(schema.blogs.slug, slug)); // Adjust the query condition
+      .where(eq(schema.blogs.slug, slug));
 
-    // Check if the result is an array and has items
-    if (Array.isArray(blogs) && blogs.length > 0) {
+    // Check if the blog post was found
+    if (blogs.length > 0) {
       const blog = blogs[0];
-      return new Response(JSON.stringify(blog), { status: 200 });
+
+      return new Response(JSON.stringify(blog), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      });
     } else {
-      return new Response(JSON.stringify({ error: 'Blog post not found' }), { status: 404 });
+      return new Response(JSON.stringify({ error: 'Blog post not found' }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
   } catch (error) {
     console.error('Error fetching blog post:', error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch blog post' }), { status: 500 });
+
+    return new Response(JSON.stringify({ error: 'Failed to fetch blog post' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }
 

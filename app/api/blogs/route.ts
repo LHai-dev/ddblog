@@ -3,11 +3,17 @@ import * as schema from '@/db/schema';
 import { db } from '@/db/turso';
 import { z } from 'zod';
 import {desc} from "drizzle-orm";
+import { calculateReadingTime } from '@/lib/readingTimeUtil';
 
 export async function GET() {
   try {
-    const blogs = await db.select().from(schema.blogs).orderBy(desc(schema.blogs.createdDate)); // Use the schema for table reference
+    // Fetch blogs from the database, ordered by the most recent
+    const blogs = await db
+      .select()
+      .from(schema.blogs)
+      .orderBy(desc(schema.blogs.createdDate)); // Use the schema for table reference
 
+    // Process the blogs to include necessary fields
     const processedBlogs = blogs.map(blog => ({
       createdDate: blog.createdDate,
       summary: blog.summary,
@@ -15,8 +21,9 @@ export async function GET() {
       author: blog.author,
       title: blog.title,
       slug: blog.slug,
-      content: blog.content,
       thumbnailUrl: blog.thumbnailUrl,
+      views: blog.views, // Include the views
+      minuteRead: blog.minuteRead, // Include the minuteRead
     }));
 
     // Return the processed blogs as JSON
@@ -32,6 +39,7 @@ export async function GET() {
     });
   }
 }
+
 const blogSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   summary: z.string().min(1, 'Summary is required'),
@@ -43,7 +51,7 @@ const blogSchema = z.object({
 });
 
 
-export async function POST(req: Request): Promise<Response> {
+export async function POST(req: Request): Promise<Response> { 
   try {
     const json = await req.json();
 
@@ -56,6 +64,9 @@ export async function POST(req: Request): Promise<Response> {
 
     const { author, title, summary, content, authorImageUrl, thumbnailUrl, categoryIds } = parsedData.data;
 
+    // Calculate reading time
+    const minuteRead = calculateReadingTime(content);
+
     // Insert into blogs table
     const insertedBlog = await db.insert(schema.blogs).values({
       slug: slugify(title, { lower: true, strict: true }),
@@ -66,6 +77,8 @@ export async function POST(req: Request): Promise<Response> {
       content,
       thumbnailUrl: thumbnailUrl || 'https://default-url.com/thumbnail.png',
       createdDate: new Date().toISOString(),
+      views: 0,  // Initialize views to 0
+      minuteRead, // Insert the calculated minuteRead value
     }).returning();
 
     const blogId = insertedBlog[0].id;

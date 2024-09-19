@@ -1,12 +1,10 @@
-// utils/readingTimeUtil.ts
-
-export function calculateReadingTime(text: string | undefined): string {
+export function calculateReadingTime(text: string | undefined): number {
   if (!text) {
-    return '0 min read'; // Handle cases where text is undefined or empty
+    return 0; // Return 0 if the content is undefined or empty
   }
 
   const wordsPerMinute = 200; // Average reading speed
   const words = text.split(/\s+/).length;
-  const readingTime = Math.ceil(words / wordsPerMinute);
-  return `${readingTime} min read`;
+  const readingTime = Math.ceil(words / wordsPerMinute); // Round up to the nearest minute
+  return readingTime; // Return the integer value
 }

@@ -10,6 +10,8 @@ export const blogs = sqliteTable('blogs', {
   createdDate: text('createdDate').notNull(),
   thumbnailUrl: text('thumbnailUrl'),
   content: text('content').notNull(),
+  views: integer('views').default(0),
+  minuteRead: integer('minuteRead'),
 });
 
 export const categories = sqliteTable("categories", {

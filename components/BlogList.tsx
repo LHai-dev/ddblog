@@ -1,14 +1,10 @@
-// BlogList.tsx
-
-'use client'; // Mark this as a Client Component
-
+'use client';
 import React, { useEffect, useState } from 'react';
 import { Post } from '@/app/type/Post';
 import BlogCard from './BlogCard';
-import { calculateReadingTime } from '@/lib/readingTimeUtil';
-import CategoryBar from "@/components/CategoryBar"; // Import the CategoryBar component
-import BlogListSkeleton from "@/components/BlogListSkeleton"; // Import the BlogListSkeleton component
-import CategoryBarSkeleton from "@/components/CategoryBarSkeleton"; // Import the CategoryBarSkeleton component
+import CategoryBar from "@/components/CategoryBar"; 
+import BlogListSkeleton from "@/components/BlogListSkeleton";
+import CategoryBarSkeleton from "@/components/CategoryBarSkeleton";
 
 export default function BlogList() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -68,10 +64,9 @@ export default function BlogList() {
             <p className="text-center text-gray-500">No posts found.</p>
           ) : (
             posts.map((post) => {
-              const readTime = calculateReadingTime(post.content);
   
               // Ensure a unique key is provided (check if slug or id is unique)
-              return <BlogCard key={post.id || post.slug} post={post} readTime={readTime} />;
+              return <BlogCard key={post.id || post.slug} post={post} />;
             })
           )}
         </div>

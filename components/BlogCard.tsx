@@ -6,10 +6,9 @@ import { CiTimer } from 'react-icons/ci';
 
 interface BlogCardProps {
   post: Post;
-  readTime: string;
 }
 
-export default function BlogCard({ post, readTime }: BlogCardProps) {
+export default function BlogCard({ post }: BlogCardProps) {
   return (
     <div className=" block mb-12 border-b border-gray-200 pb-8 hover:bg-gray-50 cursor-pointer">
       <Link href={`/blog/${post.slug}`}>
@@ -58,8 +57,8 @@ export default function BlogCard({ post, readTime }: BlogCardProps) {
               <CiTimer className="mr-1" />
               <span>{new Date(post.createdDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
               <AiOutlineRead className="mx-2" />
-              <span>{readTime}</span>
-            </div>
+              <span>{post.minuteRead} min read</span>
+              </div>
           </div>
         </div>
       </Link>

@@ -71,14 +71,14 @@ export default function CreateMediumStylePost({ session }: CreateMediumStylePost
       title: data.title,
       summary: data.summary,
       author: data.author,
-      content: data.content,
+      content: data.content, // Used to calculate minuteRead
       createdDate,
       status: 'published',
       categoryIds: [data.categoryId], // Wrap categoryId in an array
       authorImageUrl: data.authorImageUrl || undefined,
       thumbnailUrl: data.thumbnailUrl || undefined,
     };
-    
+        
     try {
       const response = await fetch('/api/blogs', {
         method: 'POST',
