@@ -11,14 +11,31 @@ export async function GET(req: Request) {
   }
 
   try {
+    // Fetch blogs by category slug
     const blogs = await getBlogsByCategorySlug(slug);
 
+    // Check if any blogs were found
     if (blogs.length === 0) {
       return NextResponse.json({ error: 'No blogs found for this category' }, { status: 404 });
     }
 
-    return NextResponse.json(blogs, { status: 200 });
+    // Process the blogs to include necessary fields
+    const processedBlogs = blogs.map(blog => ({
+      createdDate: blog.createdDate,
+      summary: blog.summary,
+      authorImageUrl: blog.authorImageUrl,
+      author: blog.author,
+      title: blog.title,
+      slug: blog.slug,
+      thumbnailUrl: blog.thumbnailUrl,
+      views: blog.views, // Include the views
+      minuteRead: blog.minuteRead, // Include the minuteRead
+    }));
+
+    // Return the processed blogs as JSON
+    return NextResponse.json(processedBlogs, { status: 200 });
   } catch (error) {
+    console.error('Error fetching blogs:', error);
     return NextResponse.json({ error: 'Failed to fetch blogs' }, { status: 500 });
   }
 }
