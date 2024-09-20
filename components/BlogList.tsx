@@ -5,6 +5,7 @@ import BlogCard from './BlogCard';
 import CategoryBar from "@/components/CategoryBar"; 
 import BlogListSkeleton from "@/components/BlogListSkeleton";
 import CategoryBarSkeleton from "@/components/CategoryBarSkeleton";
+import NotFound from '@/app/not-found';
 
 export default function BlogList() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -15,7 +16,6 @@ export default function BlogList() {
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
-      setError(null);
 
       try {
         // Fetch blogs by selected category slug or fetch all if null
@@ -40,22 +40,19 @@ export default function BlogList() {
   if (loading) {
     return (
       <div className="container mx-auto px-4">
-        {/* Category Bar Skeleton Placeholder */}
-        <CategoryBarSkeleton />
-
-        {/* Blog List Skeleton Placeholder */}
-        <BlogListSkeleton />
+        <CategoryBarSkeleton/>
+        <BlogListSkeleton/>
       </div>
     );
   }
 
   if (error) {
-    return <p className="text-center text-red-500">{error}</p>;
+    return <NotFound/>;
   }
 
   return (
     <div className="container mx-auto px-4">
-      {/* Pass setSelectedCategory to CategoryBar to handle category changes */}
+
       <CategoryBar onCategoryChange={setSelectedCategory} />
       
       <div className="flex justify-center">
@@ -64,9 +61,7 @@ export default function BlogList() {
             <p className="text-center text-gray-500">No posts found.</p>
           ) : (
             posts.map((post) => {
-  
-              // Ensure a unique key is provided (check if slug or id is unique)
-              return <BlogCard key={post.id || post.slug} post={post} />;
+                return <BlogCard key={post.id || post.slug} post={post} />;
             })
           )}
         </div>
