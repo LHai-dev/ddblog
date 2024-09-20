@@ -46,7 +46,7 @@ export default function CreateMediumStylePost({ session }: CreateMediumStylePost
     const fetchCategories = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('/api/categories');
+        const response = await fetch('/api/categories/create-blog');
         if (!response.ok) throw new Error('Failed to fetch categories');
         const data = await response.json();
         setCategories(data.categories || []);
