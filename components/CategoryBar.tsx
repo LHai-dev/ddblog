@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Category } from "@/app/type/category"; // Adjust the import path if needed
-import CategoryBarSkeleton from "./CategoryBarSkeleton";
 
 interface CategoryBarProps {
   onCategoryChange: (slug: string | null) => void;
@@ -8,7 +7,6 @@ interface CategoryBarProps {
 
 export default function CategoryBar({ onCategoryChange }: CategoryBarProps) {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // Track selected category
 
   useEffect(() => {
@@ -20,11 +18,9 @@ export default function CategoryBar({ onCategoryChange }: CategoryBarProps) {
 
         if (response.ok) {
           setCategories(data.categories);
-        } else {
-          setError("Failed to fetch categories");
         }
-      } catch (err) {
-        setError("An error occurred while fetching categories");
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
       }
     };
 
@@ -37,6 +33,7 @@ export default function CategoryBar({ onCategoryChange }: CategoryBarProps) {
       onCategoryChange(slug); // Inform the parent component
     }
   };
+
   return (
     <div className="max-w-screen-xl mx-auto md:px-8">
       <ul className="w-full border-b flex items-center gap-x-3 overflow-x-auto list-none">
