@@ -4,7 +4,7 @@ import * as schema from '@/db/schema';
 import { db } from '@/db/turso';
 import { z } from 'zod';
 import { NextRequest, NextResponse } from 'next/server';
-import { desc } from 'drizzle-orm';
+import { desc,sql } from 'drizzle-orm';
 
 // Define a zod schema to validate the incoming request
 const categorySchema = z.object({
@@ -41,14 +41,21 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET route handler for fetching all categories 
 export async function GET() {
   try {
-    // Fetch all categories from the database
-    const categories = await db.select().from(schema.categories).orderBy(desc(schema.categories.id));
+    const categoriesWithBlogs = await db
+      .select({
+        id: schema.categories.id,
+        name: schema.categories.name,
+        slug: schema.categories.slug,
+      })
+      .from(schema.categories)
+      .leftJoin(schema.blogCategory, sql`${schema.categories.id} = ${schema.blogCategory.category_id}`)
+      .where(sql`${schema.blogCategory.blog_id} IS NOT NULL`)
+      .groupBy(schema.categories.id)
+      .orderBy(desc(schema.categories.id));
 
-    // Return the categories wrapped in an object
-    return NextResponse.json({ success: true, categories });
+    return NextResponse.json({ success: true, categories: categoriesWithBlogs });
   } catch (error) {
     return NextResponse.json({ success: false, message: 'Internal Server Error' }, { status: 500 });
   }
