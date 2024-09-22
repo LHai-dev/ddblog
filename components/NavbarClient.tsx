@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { signIn } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import { Session } from 'next-auth';
+import { useState } from 'react'; // Import useState for managing dropdown visibility
 import React from "react";  // Import Session type
 
 interface NavbarClientProps {
@@ -13,6 +14,14 @@ interface NavbarClientProps {
 
 const NavbarClient: React.FC<NavbarClientProps> = ({ session }) => {
   const pathname = usePathname(); // Get the current path
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen); // Toggle the dropdown visibility
+  };
+
+  const handleSignOut = () => {
+    signOut(); // Sign out the user
+  };
 
   return (
     <nav className="bg-white w-full border-b md:border-0 md:static shadow-md">
@@ -57,14 +66,35 @@ const NavbarClient: React.FC<NavbarClientProps> = ({ session }) => {
               </Link>
             )}
 
-            {/* User avatar */}
-            <Image
-              src={session.user?.image || "/default-user-image.png"}
-              width={40}
-              height={40}
-              alt="User Avatar"
-              className="rounded-full"
-            />
+            {/* User avatar with dropdown */}
+            <div className="relative">
+              <button onClick={toggleDropdown}>
+                <Image
+                  src={session.user?.image || "/default-user-image.png"}
+                  width={40}
+                  height={40}
+                  alt="User Avatar"
+                  className="rounded-full"
+                />
+              </button>
+
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                  {/* View Blog Author Post */}
+                  <Link href={`/blog/author`} className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    View My Posts
+                  </Link>
+
+                  {/* Logout */}
+                  <button
+                    onClick={handleSignOut}
+                    className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>

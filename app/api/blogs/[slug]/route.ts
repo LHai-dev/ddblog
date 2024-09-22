@@ -1,6 +1,8 @@
 import * as schema from '@/db/schema';
 import { db } from '@/db/turso'; // Import the initialized database connection
 import { eq } from 'drizzle-orm'; // Ensure this import exists if supported
+
+import { NextRequest } from 'next/server';
 // Fetch a blog post by its slug
 export async function GET(req: Request, { params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -34,21 +36,31 @@ export async function GET(req: Request, { params }: { params: { slug: string } }
     });
   }
 }
-
-
-export async function DELETE(req: Request, { params }: { params: { slug: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: { slug: string } }) { 
   const { slug } = params;
+  
   try {
-    const result = await db
-      .delete(schema.blogs)
+    // First, get the blog by slug
+    const blogResults = await db
+      .select()
+      .from(schema.blogs)
       .where(eq(schema.blogs.slug, slug));
 
-    // Log the result to inspect its structure
+    const blog = blogResults.length > 0 ? blogResults[0] : null;
+
+    if (!blog) {
+      return new Response(JSON.stringify({ error: 'Blog not found' }), { status: 404 });
+    }
+
+    // Delete the related entries in blogCategory
+    await db.delete(schema.blogCategory).where(eq(schema.blogCategory.blog_id, blog.id));
+
+    // Delete the blog
+    const result = await db.delete(schema.blogs).where(eq(schema.blogs.id, blog.id));
+
     console.log('Delete result:', result);
 
-    // Adjust the property below based on actual result structure
-
-      return new Response(JSON.stringify({ message: 'Blog post deleted successfully' }), { status: 200 });
+    return new Response(JSON.stringify({ message: 'Blog post deleted successfully' }), { status: 200 });
 
   } catch (error) {
     console.error('Error deleting blog post:', error);
