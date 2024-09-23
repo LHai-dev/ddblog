@@ -14,8 +14,8 @@ export default function Page() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false); // State to show/hide dialog
-  const [slugToDelete, setSlugToDelete] = useState<string | null>(null); // Track post slug for deletion
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [slugToDelete, setSlugToDelete] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -28,15 +28,15 @@ export default function Page() {
           setSession(session);
         }
       } catch (error) {
-        console.error('Error fetching session:', error); // Add detailed logging
+        console.error('Error fetching session:', error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     checkSession();
   }, [router]);
-  
+
   useEffect(() => {
     if (!session) return;
 
@@ -45,6 +45,7 @@ export default function Page() {
         const response = await fetch(`/api/blogs/author?author=${session?.user?.name}`);
         if (response.ok) {
           const data = await response.json();
+          console.log('Fetched posts:', data); // Log the fetched data
           setPosts(data);
         } else {
           console.error('Failed to fetch posts:', response.statusText);
@@ -59,11 +60,12 @@ export default function Page() {
 
   const handleUpdate = (slug: string) => {
     console.log(`Update post: ${slug}`);
+    router.push(`/blog/${slug}/update`); // Navigate to the update page
   };
 
   const confirmDelete = (slug: string) => {
-    setSlugToDelete(slug); // Set the slug to delete
-    setShowDeleteDialog(true); // Show confirmation dialog
+    setSlugToDelete(slug);
+    setShowDeleteDialog(true);
   };
 
   const handleDelete = async () => {
@@ -77,15 +79,15 @@ export default function Page() {
       if (response.ok) {
         console.log(`Successfully deleted post: ${slugToDelete}`);
         setPosts((prevPosts) => prevPosts.filter((post) => post.slug !== slugToDelete));
-        setShowSuccessAlert(true); // Show success alert
-        setTimeout(() => setShowSuccessAlert(false), 3000); // Auto-hide alert after 3 seconds
+        setShowSuccessAlert(true);
+        setTimeout(() => setShowSuccessAlert(false), 3000);
       } else {
         console.error(`Failed to delete post: ${slugToDelete}, Status: ${response.status}`);
       }
     } catch (error) {
       console.error(`An error occurred while deleting the post: ${slugToDelete}`, error);
     } finally {
-      setShowDeleteDialog(false); // Close the dialog after delete
+      setShowDeleteDialog(false);
     }
   };
 
@@ -123,9 +125,9 @@ export default function Page() {
           <AuthorBlogCard
             key={post.slug}
             session={session}
-            post={post}
+            post={post} // Ensure this is correct
             onUpdate={() => handleUpdate(post.slug)}
-            onDelete={() => confirmDelete(post.slug)} // Trigger dialog before deletion
+            onDelete={() => confirmDelete(post.slug)}
           />
         ))
       ) : (
