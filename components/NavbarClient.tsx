@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { signIn, signOut } from 'next-auth/react';
+import {  signOut } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import { Session } from 'next-auth';
 import { useState } from 'react'; // Import useState for managing dropdown visibility
@@ -38,7 +38,7 @@ const NavbarClient: React.FC<NavbarClientProps> = ({ session }) => {
           />
         </Link>
 
-        {/* GitHub Sign-in Button (Hide if session exists) */}
+        {/* GitHub Sign-in Button (Hide if session exists)
         {!session && (
           <div className="md:inline-block">
             <a
@@ -50,7 +50,7 @@ const NavbarClient: React.FC<NavbarClientProps> = ({ session }) => {
               <span className="font-semibold">Get Started with GitHub</span>
             </a>
           </div>
-        )}
+        )} */}
 
         {/* Display user info and "Create Blog Post" link if session exists */}
         {session && (
