@@ -3,15 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import { Post } from '@/app/type/Post';
 import BlogCard from './BlogCard';
-import CategoryBar from "@/components/CategoryBar"; 
+// import CategoryBar from "@/components/CategoryBar"; 
 import BlogListSkeleton from "@/components/BlogListSkeleton";
-import CategoryBarSkeleton from "@/components/CategoryBarSkeleton";
+// import CategoryBarSkeleton from "@/components/CategoryBarSkeleton";
 
 export default function BlogList() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -49,8 +49,8 @@ export default function BlogList() {
     return (
       <div className="container mx-auto px-4">
               <div className="flex justify-center">
-              <div className="w-full max-w-4xl">
-                        <CategoryBarSkeleton />
+              <div className="w-full max-w-4xl mt-3">
+                        {/* <CategoryBarSkeleton /> */}
         <BlogListSkeleton />
             </div>
           </div>
@@ -61,7 +61,7 @@ export default function BlogList() {
   if (error) {
     return (
       <div className="container mx-auto px-4">
-        <CategoryBar onCategoryChange={setSelectedCategory} />
+        {/* <CategoryBar onCategoryChange={setSelectedCategory} /> */}
         <p className="text-center text-red-500 mt-4">{error}</p>
       </div>
     );
@@ -72,8 +72,8 @@ export default function BlogList() {
 
       
       <div className="flex justify-center">
-        <div className="w-full max-w-4xl">
-          <CategoryBar onCategoryChange={setSelectedCategory} />
+        <div className="w-full max-w-4xl mt-6">
+          {/* <CategoryBar onCategoryChange={setSelectedCategory} /> */}
           {posts.length === 0 ? (
             <p className="text-center text-gray-500">No posts found.</p>
           ) : (
