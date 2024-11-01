@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import {  signOut } from 'next-auth/react';
+import {   signOut } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import { Session } from 'next-auth';
 import { useState } from 'react'; // Import useState for managing dropdown visibility
@@ -30,27 +30,31 @@ const NavbarClient: React.FC<NavbarClientProps> = ({ session }) => {
         {/* Logo Section */}
         <Link href="/">
           <Image
-            src="https://miro.medium.com/v2/resize:fill:128:128/4*f7EyGRullh3Ih_2tm3k5xw.png"
+            src="/test.png"
             width={50}
             height={50}
             alt="Float UI logo"
-            className="hover:opacity-80 transition-opacity duration-300"
+            className="hover:opacity-80 transition-opacity duration-300 rounded-full"
           />
         </Link>
 
-        {/* GitHub Sign-in Button (Hide if session exists)
-        {!session && (
-          <div className="md:inline-block">
-            <a
-              onClick={() => signIn('github')}
-              className="py-3 px-6 text-white bg-black hover:bg-gray-800 transition-colors duration-300 rounded-md shadow-lg flex items-center space-x-3 focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 focus:outline-none"
-              aria-label="Sign in with GitHub"
-            >
-              <Image width={6} height={6} src="/icons8-github.svg" alt="GitHub Logo" className="h-6 w-6" />
-              <span className="font-semibold">Get Started with GitHub</span>
-            </a>
-          </div>
-        )} */}
+
+        {/* /* GitHub Sign-in Button (Hide if session exists) */}
+              {!session && (
+        <div className="md:inline-block">
+          <a
+            href="https://lhai-dev.github.io/limhai-resame-antweb-Mei--Yi/"
+            target="_blank" // This will open the link in a new tab
+            rel="noopener noreferrer" // Improves security when opening links in new tabs
+            className="py-3 px-6 text-white bg-indigo-600 hover:bg-indigo-600 transition-colors duration-300 rounded-md shadow-lg flex items-center space-x-3 focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 focus:outline-none"
+            aria-label="LimHai"
+          >
+            {/* <Image width={6} height={6} src="/icons8-github.svg" alt="GitHub Logo" className="h-6 w-6" /> */}
+            <span className="font-semibold">ប្រវត្តិរូបសង្ខេបរបស់ខ្ញុំ</span>
+          </a>
+        </div>
+      )}
+
 
         {/* Display user info and "Create Blog Post" link if session exists */}
         {session && (

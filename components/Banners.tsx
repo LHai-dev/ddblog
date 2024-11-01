@@ -5,12 +5,12 @@ const Banner = () => {
     <div className="bg-indigo-600">
       <div className="max-w-screen-xl mx-auto px-4 py-3 text-white sm:text-center md:px-8">
         <p className="font-medium">
-          this my resume {" "}
+        A bug is just an opportunity to make your code stronger.{" "}
           <Link
             href="https://lhai-dev.github.io/limhai-resame-antweb-Mei--Yi"
             className="font-semibold underline duration-150 hover:text-indigo-100 inline-flex items-center gap-x-1"
           >
-            here is my link resume
+            
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
