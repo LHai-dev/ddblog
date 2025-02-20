@@ -1,16 +1,13 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import slugify from 'slugify';
-import { ForwardRefEditor } from '@/components/mdx/ForwardRefEditor';
-import { Session } from 'next-auth';
-import { Category } from '@/app/type/category';
+import React, { useEffect, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import slugify from "slugify";
+import { ForwardRefEditor } from "@/components/mdx/ForwardRefEditor";
+import { Category } from "@/app/type/category";
 
-interface CreateMediumStylePostProps {
-  session: Session | null;
-}
+
 
 interface FormValues {
   title: string;
@@ -22,7 +19,7 @@ interface FormValues {
   categoryId: number;
 }
 
-export default function CreateMediumStylePost({ session }: CreateMediumStylePostProps) {
+export default function CreateMediumStylePost() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,14 +27,14 @@ export default function CreateMediumStylePost({ session }: CreateMediumStylePost
 
   const { control, handleSubmit, setValue, formState: { isSubmitting, errors } } = useForm<FormValues>({
     defaultValues: {
-      title: '',
-      summary: '',
-      author: session?.user?.name || 'Default Author',
-      authorImageUrl: session?.user?.image || 'https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd',
-      thumbnailUrl: '',
-      content: '## Hello world\nThis is an example post.',
+      title: "",
+      summary: "",
+      author: "Default Author",
+      authorImageUrl: "https://miro.medium.com/v2/resize:fill:40:40/0*zFTV8OpWZVwQRLXd",
+      thumbnailUrl: "",
+      content: "## Hello world\nThis is an example post.",
       categoryId: 0,
-    }
+    },
   });
 
   const router = useRouter();
@@ -80,16 +77,16 @@ export default function CreateMediumStylePost({ session }: CreateMediumStylePost
     };
         
     try {
-      const response = await fetch('/api/blogs', {
-        method: 'POST',
+      const response = await fetch("/api/blogs", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
-        router.push(`/blog/author`);
+        router.push("/blog/author");
       } else {
         const errorMessage = await response.text();
         setSubmitError(`Failed to submit post: ${errorMessage}`);

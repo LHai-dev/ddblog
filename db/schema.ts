@@ -28,3 +28,12 @@ export const blogCategory = sqliteTable('blogCategory', {
     .references(() => categories.id, { onDelete: 'cascade' })
     .notNull(),
 });
+
+export const users = sqliteTable('users', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  email: text('email').unique().notNull(),
+  name: text('name'),
+  password: text('password').notNull(),
+  role: text('role', { enum: ['user', 'admin'] }).default('user'),
+  createdAt: text('created_at').default(new Date().toISOString()),
+});
